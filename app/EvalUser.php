@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class EvalStep extends Model
+class EvalUser extends Model
 {
     //
 }

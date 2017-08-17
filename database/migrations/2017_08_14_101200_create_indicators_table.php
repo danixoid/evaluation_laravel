@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEvalProcessesTable extends Migration
+class CreateIndicatorsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,23 @@ class CreateEvalProcessesTable extends Migration
      */
     public function up()
     {
-        Schema::create('eval_processes', function (Blueprint $table) {
+        Schema::create('indicators', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('eval_user_id');
             $table->unsignedInteger('competence_id');
+            $table->unsignedInteger('eval_level_id')->nullable();
+            $table->text('name');
             $table->timestamps();
 
-            $table->foreign('eval_user_id')
-                ->references('id')->on('eval_users');
-            $table->foreign('competence_id')
-                ->references('id')->on('competences');
-        });
+            $table->unique(['competence_id','eval_level_id']);
 
+            $table->foreign('competence_id')
+                ->references('id')
+                ->on('competences');
+
+            $table->foreign('eval_level_id')
+                ->references('id')
+                ->on('eval_levels');
+        });
     }
 
     /**
@@ -34,6 +39,6 @@ class CreateEvalProcessesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('eval_processes');
+        Schema::dropIfExists('indicators');
     }
 }

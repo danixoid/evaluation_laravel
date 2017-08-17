@@ -41,15 +41,45 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
                         @if(Auth::check() && Auth::user()->hasAnyRole(['admin','manager']))
-                            <li{!! preg_match("/exam/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('exam.index') }}">{!! trans('interface.exams') !!}</a></li>
-{{--                            <li><a href="{{ route('ticket.index') }}">{!! trans('interface.tickets') !!}</a></li>--}}
-                            <li{!! preg_match("/(org)|(position)|(user)/",request()->url()) ? " class=\"active\"" : " class=\"dropdown\"" !!}>
+
+
+                            <li class="{!! preg_match("/exam|ticket/",request()->url()) ? "active" : "" !!} dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                    {{ trans('interface.quests_task') }} <span class="caret"></span>
+                                </a>
+
+                                <ul class="dropdown-menu" role="menu">
+                                    <li{!! preg_match("/exam/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('exam.index') }}">{!! trans('interface.exams') !!}</a></li>
+                                    <li{!! preg_match("/quest/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('quest.index') }}">{!! trans('interface.tasks') !!}</a></li>
+                                </ul>
+                            </li>
+
+                            <li class="{!! preg_match("/competence|evaluation/",request()->url()) ? "active" : "" !!}  dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                    {{ trans('interface.evaluation_personal') }} <span class="caret"></span>
+                                </a>
+
+                                <ul class="dropdown-menu" role="menu">
+                                    <li class="{!! preg_match("/competence/",request()->url()) ? "active" : "" !!} menu-item dropdown dropdown-submenu">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                            {{ trans('interface.competences') }}
+                                        </a>
+
+                                        <ul class="dropdown-menu" role="menu">
+                                            @foreach(\App\CompetenceType::all() as $type)
+                                            <li{!! preg_match("/competence\/(.+)?type=$type->id/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('competence.index',["type=".$type->id]) }}">{{ $type->name }}</a></li>
+                                            @endforeach
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <li class="{!! preg_match("/org|position|func|user/",request()->url()) ? "active" : "" !!} dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                     {{ trans('interface.references') }} <span class="caret"></span>
                                 </a>
 
                                 <ul class="dropdown-menu" role="menu">
-                                    <li{!! preg_match("/quest/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('quest.index') }}">{!! trans('interface.quests_task') !!}</a></li>
                                     <li{!! preg_match("/org/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('org.index') }}">{!! trans('interface.orgs') !!}</a></li>
                                     <li{!! preg_match("/position/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('position.index') }}">{!! trans('interface.positions') !!}</a></li>
                                     <li{!! preg_match("/func/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('func.index') }}">{!! trans('interface.funcs') !!}</a></li>

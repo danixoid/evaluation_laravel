@@ -25,5 +25,15 @@ class DatabaseSeeder extends Seeder
 //        $this->call(QuestTableSeeder::class);
         // Exam seeder will created.
 //        $this->call(ExamTableSeeder::class);
+        // EvalType seeder will created.
+        $this->call(EvalTypeTableSeeder::class);
+        // EvalLevel seeder will created.
+        $this->call(EvalLevelTableSeeder::class);
+        // EvalRole seeder will created.
+        $this->call(EvalRoleTableSeeder::class);
+        // Competence seeder will created.
+        $this->call(CompetenceTableSeeder::class);
+
+
     }
 }

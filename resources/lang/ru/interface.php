@@ -23,6 +23,7 @@ return [
     'situation' => 'Ситуация',
     'source' => 'Исходные данные',
     'task' => 'Задание',
+    'tasks' => 'Задания',
     'answer' => 'Решение',
     'timer' => 'Время на задание',
     'next' => 'Далее',
@@ -130,6 +131,15 @@ return [
     'failure_deleted_quest' => 'Не удалось удалить ситуационную задачу',
     'success_restored_quest' => 'Ситуационная задача восстановлена',
 
+    //NEW WORDS FOR EVALUATION PERSONAL
+    'evaluation_personal' => 'Оценка персонала',
+    'competence' => 'Компетенция',
+    'competences' => 'Компетенции',
+    'competence_type' => 'Вид компетенции',
+    'notes' => 'Описание',
+    'add_competences_line' => 'Добавляйте компетенции через построчно, через запятую указывайте комментарий',
+
+
     // ORG
     'success_create_org' => 'Успешно создано новое подразделение',
     'failure_create_org' => 'Не удалось создать подразделение',
@@ -170,5 +180,14 @@ return [
     'success_deleted_ticket' => 'Билет удален',
     'failure_deleted_ticket' => 'Не удалось удалить билет',
 
+
+    // COMPETENCE
+    'success_create_competence' => 'Успешно создано новая компетенция',
+    'failure_create_competence' => 'Не удалось создать компетенцию',
+    'success_save_competence' => 'Успешно сохранена компетенция',
+    'failure_save_competence' => 'Не удалось сохранить компетенцию',
+    'success_deleted_competence' => 'Компетенция архивирована',
+    'failure_deleted_competence' => 'Не удалось удалить компетенцию',
+    'success_restored_competence' => 'Компетенция восстановлена',
 
 ];
