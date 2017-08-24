@@ -12,7 +12,7 @@
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
-                    <div class="panel-heading">{!! $competence->competenceType->note !!}: {{ $competence->name }}</div>
+                    <div class="panel-heading">{!! $competence->type->note !!}: {{ $competence->name }}</div>
 
                     <div class="panel-body form-horizontal">
 
@@ -75,7 +75,7 @@
 
                             </div>
                             <div class=" col-md-3">
-                                <a href="{!! route('competence.index',['type'=>$competence->competenceType->id]) !!}" class="btn btn-block btn-warning">{!! trans('interface.prev') !!}</a>
+                                <a href="{!! route('competence.index',['type'=>$competence->type->id]) !!}" class="btn btn-block btn-warning">{!! trans('interface.prev') !!}</a>
                             </div>
                         </div>
                     </div>

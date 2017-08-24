@@ -44,6 +44,9 @@ Route::resource('/exam',"ExamController");
 
 // ОЦЕНКА ПЕРСОНАЛА 360
 Route::resource('/competence',"CompetenceController");
+Route::resource('/evaluation',"EvaluationController");
+Route::resource('/evaluater',"EvaluaterController");
+Route::resource('/evalprocess',"EvalProcessController");
 
 
 

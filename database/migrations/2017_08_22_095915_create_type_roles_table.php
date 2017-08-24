@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEvalUsersTable extends Migration
+class CreateTypeRolesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,19 @@ class CreateEvalUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('eval_users', function (Blueprint $table) {
+        Schema::create('type_roles', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('evaluation_id');
+            $table->unsignedInteger('eval_type_id');
             $table->unsignedInteger('eval_role_id');
-            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('max');
             $table->timestamps();
 
-            $table->foreign('evaluation_id')
-                ->references('id')->on('evaluations');
+            $table
+                ->unique(['eval_type_id','eval_role_id']);
+            $table->foreign('eval_type_id')
+                ->references('id')->on('eval_types');
             $table->foreign('eval_role_id')
                 ->references('id')->on('eval_roles');
-            $table->foreign('user_id')
-                ->references('id')->on('users');
         });
     }
 
@@ -36,6 +36,6 @@ class CreateEvalUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('eval_users');
+        Schema::dropIfExists('type_roles');
     }
 }

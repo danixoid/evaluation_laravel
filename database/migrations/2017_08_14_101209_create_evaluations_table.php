@@ -20,6 +20,7 @@ class CreateEvaluationsTable extends Migration
             $table->unsignedInteger('position_id');
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('eval_type_id');
+            $table->timestamp('started_at')->nullable(); //время завершения
             $table->timestamps();
 
             $table->foreign('org_id')

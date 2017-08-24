@@ -14,8 +14,8 @@ class Indicator extends Model
         return $this->belongsTo(\App\Competence::class);
     }
 
-    public function evalLevel()
+    public function level()
     {
-        return $this->belongsTo(\App\EvalLevel::class);
+        return $this->belongsTo(\App\EvalLevel::class,'eval_level_id');
     }
 }

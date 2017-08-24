@@ -21,7 +21,7 @@ class Competence extends Model
                 foreach (\App\EvalLevel::all() as $lvl)
                 {
                     $indicator = new \App\Indicator();
-                    $indicator->name = "";
+                    $indicator->name = "";//$lvl->note
                     $indicator->eval_level_id = $lvl->id;
                     $indicator->competence_id = $competence->id;
                     $indicator->save();
@@ -34,8 +34,8 @@ class Competence extends Model
         return $this->hasMany(\App\Indicator::class);
     }
 
-    public function competenceType() {
-        return $this->belongsTo(\App\CompetenceType::class);
+    public function type() {
+        return $this->belongsTo(\App\CompetenceType::class,'competence_type_id');
     }
 
     public function positions()

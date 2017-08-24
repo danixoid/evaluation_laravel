@@ -55,11 +55,13 @@
                             </li>
 
                             <li class="{!! preg_match("/competence|evaluation/",request()->url()) ? "active" : "" !!}  dropdown">
+
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                     {{ trans('interface.evaluation_personal') }} <span class="caret"></span>
                                 </a>
 
                                 <ul class="dropdown-menu" role="menu">
+                                    <li{!! preg_match("/evaluation/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('evaluation.index') }}">{{ trans('interface.evaluation_list') }}</a></li>
                                     <li class="{!! preg_match("/competence/",request()->url()) ? "active" : "" !!} menu-item dropdown dropdown-submenu">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                             {{ trans('interface.competences') }}
@@ -70,7 +72,16 @@
                                             <li{!! preg_match("/competence\/(.+)?type=$type->id/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('competence.index',["type=".$type->id]) }}">{{ $type->name }}</a></li>
                                             @endforeach
                                         </ul>
-                                    </li>
+                                    </li>{{--
+                                    <li class="{!! preg_match("/evaluation\/report/",request()->url()) ? "active" : "" !!} menu-item dropdown dropdown-submenu">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                            {{ trans('interface.competences') }}
+                                        </a>
+
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li{!! preg_match("/evaluation\/report\//",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('eval_report.index') }}">{{ trans('interface.evaluation_personal') }}</a></li>
+                                        </ul>
+                                    </li>--}}
                                 </ul>
                             </li>
 

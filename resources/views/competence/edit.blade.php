@@ -12,7 +12,7 @@
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
-                    <div class="panel-heading">{{ $competence->competenceType->note }} | {!! trans('interface.edit') !!}</div>
+                    <div class="panel-heading">{{ $competence->type->note }} | {!! trans('interface.edit') !!}</div>
 
                     <div class="panel-body">
 
@@ -47,7 +47,7 @@
                             @endforeach
 
 
-                            @if($competence->competenceType->prof)
+                            @if($competence->type->prof)
                             <div class="form-group">
                                 <div class="col-md-offset-3 col-md-9 table-responsive">
                                     <table id="struct_table" class="table table-condensed">

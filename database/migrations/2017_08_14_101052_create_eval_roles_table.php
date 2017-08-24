@@ -16,6 +16,7 @@ class CreateEvalRolesTable extends Migration
         Schema::create('eval_roles', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->string('code')->unique();
             $table->string('title');
             $table->timestamps();
         });
