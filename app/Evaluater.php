@@ -8,6 +8,8 @@ class Evaluater extends Model
 {
     protected $fillable = ['evaluation_id','user_id','eval_role_id'];
 
+    protected $appends = ['finished'];
+
     public function user()
     {
         return $this->belongsTo(\App\User::class);
@@ -33,5 +35,11 @@ class Evaluater extends Model
         return $this
             ->belongsToMany(\App\Indicator::class,\App\EvalProcess::class)
             ->withTimestamps();
+    }
+
+    public function getFinishedAttribute()
+    {
+        return $this->evaluation->started
+            && $this->processes()->whereNull('eval_level_id')->count() == 0;
     }
 }

@@ -16,7 +16,14 @@
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
-                    <div class="panel-heading">{{ $evaluation->evaluated->name }} | {{ $evaluation->type->name }}</div>
+                    <div class="panel-heading">
+                        <div class="row">
+                            <label class="col-md-10">{{ $evaluation->evaluated->name }} | {{ $evaluation->type->name }}</label>
+                            <div class="col-md-2 text-right">
+                                <a href="{!! route('evaluation.show',['id'=>$evaluation->id]) !!}" >{!! trans('interface.prev') !!}</a>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="panel-body">
 
@@ -110,11 +117,13 @@
                             </div>
 
                             <div class="form-group">
-                                <div class="col-md-offset-3 col-md-3">
+                                <div class="col-md-offset-3 col-md-4">
                                     <button class="btn btn-block btn-danger" >{!! trans('interface.add') !!}</button>
                                 </div>
-                                <div class=" col-md-3">
-                                    <a href="{!! route('evaluation.show',['id'=>$evaluation->id]) !!}" class="btn btn-block btn-primary">{!! trans('interface.prev') !!}</a>
+                                <div class="col-md-4">
+                                    @if($evaluation->enough)
+                                        <a href="#" class="btn btn-block btn-primary" onclick="$('#form_start_evaluation').submit();">{!! trans('interface.start') !!}</a>
+                                    @endif
                                 </div>
 
                             </div>
@@ -129,6 +138,11 @@
                                 {!! method_field("DELETE") !!}
                             </form>
                         @endforeach
+
+                        <form id="form_start_evaluation" action="{!! route('evaluation.update',['id' => $evaluation->id]) !!}" method="POST">
+                            {!! csrf_field() !!}
+                            {!! method_field("PUT") !!}
+                        </form>
 
                     </div>
                 </div>

@@ -17,7 +17,7 @@ class CreateEvalProcessesTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('evaluater_id');
             $table->unsignedInteger('competence_id');
-            $table->unsignedInteger('eval_level_id');
+            $table->unsignedInteger('eval_level_id')->nullable();
             $table->timestamps();
 
             $table

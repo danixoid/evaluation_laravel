@@ -10,7 +10,7 @@ class Evaluation extends Model
     protected $fillable = ['org_id','position_id','func_id',
         'eval_type_id','user_id','started_at'];
 
-    protected $appends = ['started'];
+    protected $appends = ['started','is_total','enough'];
 
     protected static function boot()
     {
@@ -32,6 +32,16 @@ class Evaluation extends Model
                     ]);
                 }
 
+            }
+        );
+
+        static::updating(
+            function($evaluation)
+            {
+
+                $old = \App\Evaluation::find($evaluation->id);
+
+                if($evaluation->started && !$old->started)
                 // CHOOSE COMPETENCE FOR EVALUATION
                 $competences = \App\Competence::whereDoesntHave('positions')
                     ->orWhereHas('positions',function($q) use ($evaluation)
@@ -47,9 +57,15 @@ class Evaluation extends Model
                     })
                     ->get();
 
-                foreach ($competences as $competence)
+                foreach ($evaluation->evaluaters as $evaluater)
                 {
-                    $evaluation->competences()->attach($competence);
+                    foreach ($competences as $competence)
+                    {
+                        $process = \App\EvalProcess::create([
+                            'evaluater_id' => $evaluater->id,
+                            'competence_id' => $competence->id,
+                        ]);
+                    }
                 }
 
             }
@@ -86,15 +102,34 @@ class Evaluation extends Model
         return $this->belongsTo(\App\Func::class);
     }
 
-    public function competences()
-    {
-        return $this
-            ->belongsToMany(\App\Competence::class,"eval_competences")
-            ->withTimestamps();
-    }
-
     public function getStartedAttribute()
     {
         return $this->started_at != null;
+    }
+
+    public function getIsTotalAttribute()
+    {
+        $totalRole = \App\EvalRole::whereCode('total')->first();
+        $evaluaters = $this->evaluaters()->where('eval_role_id','<>',$totalRole->id)->get();
+
+        foreach ($evaluaters as $evaluater)
+        {
+            if(!$evaluater->finished) return false;
+        }
+
+        return true;
+    }
+
+    public function getEnoughAttribute()
+    {
+        foreach($this->type->roles as $role)
+        {
+            $count = $this->evaluaters()->whereEvalRoleId($role->id)->count();
+            if($count < $role->pivot->min
+                || $count > $role->pivot->max)
+                return false;
+        }
+
+        return true;
     }
 }

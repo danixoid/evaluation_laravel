@@ -146,6 +146,11 @@ return [
     'minimum' => 'Минимум',
     'level' => 'Уровень',
     'add_competences_line' => 'Добавляйте компетенции через построчно, через запятую указывайте комментарий',
+    'evaluation_started' => 'Оценка начата',
+    'evaluation_finished' => 'Оценка завершена',
+//    '' => '',
+//    '' => '',
+//    '' => '',
 
 
     // ORG
@@ -211,5 +216,9 @@ return [
     'failure_create_evaluater' => 'Не удалось добавить оценивающего работника',
     'success_deleted_evaluater' => 'Успешно удален оценивающий работник',
     'failure_deleted_evaluater' => 'Не удалось удалить оценивающего работника',
+
+    // EVAL_PROCESS
+    'success_create_eval_process' => 'Успешно добавлены оценки работнику',
+    'failure_create_eval_process' => 'Не удалось добавить оценки работнику',
 
 ];

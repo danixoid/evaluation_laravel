@@ -40,9 +40,9 @@ class EvalProcessController extends Controller
 
         $evalProcesses = null;
 //        try {
-            foreach ($data['process'] as $process)
+            foreach ($data['process'] as $id => $process)
             {
-                $evalProcesses = \App\EvalProcess::create($process);
+                $evalProcesses = \App\EvalProcess::updateOrCreate(['id' => $id], $process);
             }/*
         } catch (\Exception $e) {
             $evalProcesses = null;

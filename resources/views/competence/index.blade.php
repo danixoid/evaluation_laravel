@@ -102,10 +102,10 @@
                         @foreach($competences as $competence)
                             <p>{{--{{ $competence->id }}. --}}<strong>{{ $competence->name }}</strong></p>
                             <p>{{ $competence->note }}</p>
-                            <ul class="list-group list-inline">
+                            <ul class="list-group list-unstyled">
                                 @foreach($competence->indicators as $indicator)
                                     <li>
-                                        <strong>{{ $indicator->evalLevel->name }}</strong>
+                                        <strong>{{ $indicator->level->name }}</strong>
                                         {{ $indicator->name }}
                                     </li>
                                 @endforeach

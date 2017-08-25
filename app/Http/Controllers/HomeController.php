@@ -52,7 +52,20 @@ class HomeController extends Controller
                 ->orWhere('chief_id', Auth::user()->id);
             })
             ->paginate(10);
-        return view('home',['exams' => $exams->appends(Input::except('page'))]);
+
+        $evaluaters = \App\Evaluater::where(function($q) {
+                if(Auth::user()->hasAnyRole(['admin','manager'])) {
+                    return $q;
+                }
+                return $q->whereUserId(Auth::user()->id);
+            })
+            ->paginate(10);
+
+
+        return view('home',[
+            'exams' => $exams->appends(Input::except('page')),
+            'evaluaters' => $evaluaters->appends(Input::except('page'))
+        ]);
     }
 
     /**

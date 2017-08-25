@@ -15,7 +15,7 @@ class EvaluationController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('role:admin,manager',['except' => ['index','show']]);
+        $this->middleware('role:admin,manager');
     }
 
     /**
@@ -159,7 +159,7 @@ class EvaluationController extends Controller
             abort(404);
         }
 
-        if(!$evaluation) {
+        if(!$evaluation || !$evaluation->enough) {
 
             if($request->ajax()) {
                 return response()->json(['success' => false, 'message' => trans('interface.failure_save_evaluation')]);

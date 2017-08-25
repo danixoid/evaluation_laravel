@@ -25,7 +25,7 @@
                                 <ul class="list-group list-unstyled">
                                 @foreach($competence->indicators as $indicator)
                                     <li>
-                                        <strong>{{ $indicator->evalLevel->name }}</strong><br />
+                                        <strong>{{ $indicator->level->name }}</strong><br />
                                         {{ $indicator->name }}
                                     </li>
                                 @endforeach

@@ -13,7 +13,7 @@ class EvalRole extends Model
         return $this
             ->belongsToMany(\App\EvalType::class,"type_roles",
                 'eval_role_id','eval_type_id')
-            ->withPivot("max")
+            ->withPivot("min","max")
             ->withTimestamps();
     }
 }

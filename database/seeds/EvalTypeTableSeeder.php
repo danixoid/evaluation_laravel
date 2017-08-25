@@ -22,35 +22,35 @@ class EvalTypeTableSeeder extends Seeder
         $evalType->name = "90&deg;";
         $evalType->note = "Оценка ".$evalType->name;
         $evalType->save();
-        $evalType->roles()->attach($chief,['max' => 1]);
-        $evalType->roles()->attach($total,['max' => 1]);
+        $evalType->roles()->attach($chief,['min' => 1,'max' => 1]);
+        $evalType->roles()->attach($total,['min' => 1,'max' => 1]);
 
         $evalType = new \App\EvalType();
         $evalType->name = "180&deg;";
         $evalType->note = "Оценка ".$evalType->name;
         $evalType->save();
-        $evalType->roles()->attach($chief,['max' => 1]);
-        $evalType->roles()->attach($self,['max' => 1]);
-        $evalType->roles()->attach($total,['max' => 1]);
+        $evalType->roles()->attach($chief,['min' => 1,'max' => 1]);
+        $evalType->roles()->attach($self,['min' => 1,'max' => 1]);
+        $evalType->roles()->attach($total,['min' => 1,'max' => 1]);
 
         $evalType = new \App\EvalType();
         $evalType->name = "270&deg;";
         $evalType->note = "Оценка ".$evalType->name;
         $evalType->save();
-        $evalType->roles()->attach($chief,['max' => 1]);
-        $evalType->roles()->attach($self,['max' => 1]);
-        $evalType->roles()->attach($under,['max' => 5]);
-        $evalType->roles()->attach($total,['max' => 1]);
+        $evalType->roles()->attach($chief,['min' => 1,'max' => 1]);
+        $evalType->roles()->attach($self,['min' => 1,'max' => 1]);
+        $evalType->roles()->attach($under,['min' => 1,'max' => 5]);
+        $evalType->roles()->attach($total,['min' => 1,'max' => 1]);
 
         $evalType = new \App\EvalType();
         $evalType->name = "360&deg;";
         $evalType->note = "Оценка ".$evalType->name;
         $evalType->save();
-        $evalType->roles()->attach($chief,['max' => 1 ]);
-        $evalType->roles()->attach($self,['max' => 1 ]);
-        $evalType->roles()->attach($under,['max' => 5 ]);
-        $evalType->roles()->attach($coworker,['max' => 5 ]);
-        $evalType->roles()->attach($client,['max' => 5 ]);
-        $evalType->roles()->attach($total,['max' => 1]);
+        $evalType->roles()->attach($chief,['min' => 1,'max' => 1 ]);
+        $evalType->roles()->attach($self,['min' => 1,'max' => 1 ]);
+        $evalType->roles()->attach($under,['min' => 1,'max' => 5 ]);
+        $evalType->roles()->attach($coworker,['min' => 1,'max' => 5 ]);
+        $evalType->roles()->attach($client,['min' => 0,'max' => 5 ]);
+        $evalType->roles()->attach($total,['min' => 1,'max' => 1]);
     }
 }

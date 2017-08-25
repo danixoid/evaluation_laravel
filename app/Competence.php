@@ -45,4 +45,9 @@ class Competence extends Model
             ->withPivot("func_id", "position_id", "org_id")
             ->withTimestamps();
     }
+
+    public function processes() {
+        return $this->hasMany(\App\EvalProcess::class);
+    }
+
 }

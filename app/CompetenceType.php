@@ -10,6 +10,8 @@ class CompetenceType extends Model
 
     public function competences()
     {
-        return $this->hasMany(\App\Competence::class);
+        return $this
+            ->hasMany(\App\Competence::class)
+            ->withTrashed();
     }
 }

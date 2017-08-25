@@ -16,7 +16,7 @@
                                 <th>№</th>
                                 <th>{{ trans('interface.org') }} / {{ trans('interface.func') }}</th>
                                 <th>{{ trans('interface.position') }}</th>
-                                <th>{{ trans('interface.user') }}</th>
+                                <th>{{ trans('interface.employee') }}</th>
 {{--                                <th>{{ trans('interface.quests') }}</th>--}}
                                 <th>{{ trans('interface.exam_status') }}</th>
                             </tr>
@@ -25,7 +25,7 @@
                             <?php $num = 1; ?>
                             @foreach($exams as $exam)
                                 <tr>
-                                    <td>{!! $num++ !!}</td>
+                                    <td>{!! $num++ !!}
                                     <td>
                                         <span class="text-info">{!! $exam->org->name !!}</span><span
                                                 class="text-primary">{{ $exam->func ? "/".$exam->func->name : "" }}</span>
@@ -43,6 +43,50 @@
                         </tbody>
                     </table>
                     {!! $exams->links() !!}
+                    @else
+                        <h3>{!! trans('interface.not_found') !!}</h3>
+                    @endif
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">{!! trans('interface.evaluater_personal') !!}</div>
+
+                <div class="panel-body">
+
+                    @if(count($evaluaters) > 0)
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>{{ trans('interface.org') }} / {{ trans('interface.func') }}</th>
+                                <th>{{ trans('interface.position') }}</th>
+                                <th>{{ trans('interface.evaluated') }}</th>
+{{--                                <th>{{ trans('interface.quests') }}</th>--}}
+                                <th>{{ trans('interface.exam_status') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $num = 1; ?>
+                            @foreach($evaluaters as $evaluater)
+                                <tr>
+                                    <td>{!! $num++ !!}</td>
+                                    <td>
+                                        <span class="text-info">{!! $evaluater->evaluation->org->name !!}</span><span
+                                                class="text-primary">{{ $evaluater->evaluation->func ? "/".$evaluater->evaluation->func->name : "" }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-info">{!! $evaluater->evaluation->position->name !!}</span>
+                                    </td>
+                                    <td>{!! $evaluater->evaluation->evaluated->name !!}</td>
+{{--                                    <td>{!! $exam->count !!}</td>--}}
+                                    <td><a href="{!! route('evaluater.show',['id' => $evaluater->id]) !!}">
+                                        <span class="text-danger">
+                                        {{ $evaluater->role->name }}</span></a></td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    {!! $evaluaters->links() !!}
                     @else
                         <h3>{!! trans('interface.not_found') !!}</h3>
                     @endif

@@ -17,6 +17,7 @@ class CreateTypeRolesTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('eval_type_id');
             $table->unsignedInteger('eval_role_id');
+            $table->unsignedInteger('min');
             $table->unsignedInteger('max');
             $table->timestamps();
 

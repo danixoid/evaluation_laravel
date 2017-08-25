@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\EvaluaterCreateRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EvaluaterController extends Controller
 {
@@ -14,7 +15,7 @@ class EvaluaterController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('role:admin,manager'/*,['except' => ['index','show']]*/);
+        $this->middleware('role:admin,manager',['except' => ['index','show']]);
     }
 
     /**
@@ -89,7 +90,17 @@ class EvaluaterController extends Controller
      */
     public function show($id)
     {
-        //
+        $evaluater = \App\Evaluater::find($id);
+
+        if($evaluater->user_id == Auth::user()->id ||
+            Auth::user()->hasAnyRole(['admin','manager']))
+        {
+            return view('evaluater.show',['me' => $evaluater,
+                'evaluation' => $evaluater->evaluation]);
+        }
+
+        abort(404);
+//        return ;
     }
 
     /**

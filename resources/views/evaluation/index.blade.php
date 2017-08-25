@@ -21,7 +21,7 @@
                         <div class="row">
                             <label class="col-md-10">{!! trans('interface.evaluation_list') !!}</label>
                             <div class="col-md-2 text-right">
-                                <a href="{!! route('evaluation.create') !!}" >{!! trans('interface.add') !!}</a>
+                                <a href="{!! route('evaluation.create') !!}" >{!! trans('interface.create') !!}</a>
                             </div>
                         </div>
                     </div>
@@ -78,42 +78,41 @@
 
                         @if(count($evaluations) > 0)
                         <div class="container-fluid">
-                            <div class="row">
-                            @foreach($evaluations as $evaluation)
-                                <div class="well col-md-4">
-                                    <p>{{--{{ $evaluation->id }}. --}}<strong>{{ $evaluation->evaluated->name }}</strong>, {{ $evaluation->type->note }}</p>
-                                    <ul class="list-group list-unstyled">
-                                        @foreach($evaluation->evaluaters as $evaluater)
-                                            <li>
-                                                <strong>{{ $evaluater->role->name }}</strong>
-                                                {{ $evaluater->user->name }}
-                                            </li>
-                                        @endforeach
-                                    </ul>
 
-                                    <p>
-                                        <a href="{!! route('evaluation.show',['id'=>$evaluation->id]) !!}">{!!
-                                            trans('interface.show') !!}</a>
-                                        @if(!$evaluation->started) |
-                                            <a href="{!! route('evaluation.edit',['id'=>$evaluation->id]) !!}">{!!
-                                            trans('interface.edit') !!}</a> |
-                                        <a href="#form_delete_evaluation{{ $evaluation->id }}"
-                                           onclick="$('#form_delete_evaluation{{ $evaluation->id }}').submit();">{!!
-                                                        trans('interface.destroy') !!}</a>
-                                        @else
+                        @foreach($evaluations as $evaluation)
+                            <div class="well">
+                                <p>{{--{{ $evaluation->id }}. --}}<strong>{{ $evaluation->evaluated->name }}</strong>, {{ $evaluation->type->note }}</p>
+                                <ul class="list-group list-unstyled">
+                                    @foreach($evaluation->evaluaters as $evaluater)
+                                        <li>
+                                            <strong>{{ $evaluater->role->name }}</strong>
+                                            {{ $evaluater->user->name }}
+                                        </li>
+                                    @endforeach
+                                </ul>
 
-                                        @endif
-                                    </p>
+                                <p>
+                                    <a href="{!! route('evaluation.show',['id'=>$evaluation->id]) !!}">{!!
+                                        trans('interface.show') !!}</a>
+                                    @if(!$evaluation->started) |
+                                        <a href="{!! route('evaluation.edit',['id'=>$evaluation->id]) !!}">{!!
+                                        trans('interface.edit') !!}</a> |
+                                    <a href="#form_delete_evaluation{{ $evaluation->id }}"
+                                       onclick="$('#form_delete_evaluation{{ $evaluation->id }}').submit();">{!!
+                                                    trans('interface.destroy') !!}</a>
+                                    @else
 
-                                    @if(!$evaluation->started)
-                                    <form id="form_delete_evaluation{{ $evaluation->id }}" action="{!! route('evaluation.destroy',['id' => $evaluation->id]) !!}" method="POST">
-                                        {!! csrf_field() !!}
-                                        {!! method_field("DELETE") !!}
-                                    </form>
                                     @endif
-                                </div>
-                            @endforeach
+                                </p>
+
+                                @if(!$evaluation->started)
+                                <form id="form_delete_evaluation{{ $evaluation->id }}" action="{!! route('evaluation.destroy',['id' => $evaluation->id]) !!}" method="POST">
+                                    {!! csrf_field() !!}
+                                    {!! method_field("DELETE") !!}
+                                </form>
+                                @endif
                             </div>
+                        @endforeach
                         </div>
 
                         @else
