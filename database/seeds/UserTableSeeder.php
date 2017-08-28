@@ -36,12 +36,15 @@ class UserTableSeeder extends Seeder
 
         $role_employee = Role::where("name", "employee")->first();
         for($i = 0; $i < 20; $i++) :
-            $employee = new User();
-            $employee->name = "Иван" . $i . " Иванов" . $i;
-            $employee->email = "employee" . $i . "@example.com";
-            $employee->iin = "0000000000" . ($i < 10 ? "0" : "") . $i;
-            $employee->password = bcrypt("12345");
-            $employee->save();
+
+            $employee = factory(App\User::class)->create();
+//            $employee->roles()->attach($role_employee);
+//            $employee = new User();
+//            $employee->name = "Иван" . $i . " Иванов" . $i;
+//            $employee->email = "employee" . $i . "@example.com";
+//            $employee->iin = "0000000000" . ($i < 10 ? "0" : "") . $i;
+//            $employee->password = bcrypt("12345");
+//            $employee->save();
 
             $employee->roles()->attach($role_employee);
         endfor;

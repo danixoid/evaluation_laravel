@@ -93,7 +93,7 @@
                             </div>
 
 
-                            <div class="form-group">
+                            <div class="form-group role_form_group">
                                 <label class="col-md-3 control-label">{!! trans('interface.role') !!}</label>
                                 <div class="col-md-4">
                                     <input type="hidden" name="evaluation_id" value="{{ $evaluation->id }}">
@@ -116,20 +116,15 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group role_form_group">
                                 <div class="col-md-offset-3 col-md-4">
                                     <button class="btn btn-block btn-danger" >{!! trans('interface.add') !!}</button>
                                 </div>
-                                <div class="col-md-4">
-                                    @if($evaluation->enough)
-                                        <a href="#" class="btn btn-block btn-primary" onclick="$('#form_start_evaluation').submit();">{!! trans('interface.start') !!}</a>
-                                    @endif
-                                </div>
 
                             </div>
-
-
                         </form>
+
+
 
 
                         @foreach($evaluation->evaluaters as $evaluater)
@@ -142,6 +137,37 @@
                         <form id="form_start_evaluation" action="{!! route('evaluation.update',['id' => $evaluation->id]) !!}" method="POST">
                             {!! csrf_field() !!}
                             {!! method_field("PUT") !!}
+
+                            @foreach (\App\CompetenceType::all() as $type)
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">{!! $type->note !!}</label>
+                                    <div class="col-md-9">
+                                        @foreach ($competences as $competence)
+
+                                            @if($competence->type->id == $type->id)
+                                                <div class="checkbox">
+                                                    <label><input type="checkbox" name="competences[]" checked="checked" value="{{ $competence->id }}">
+                                                        <strong>{{ $competence->name }}</strong> {{ $competence->note }}</label>
+                                                    {{--@foreach($competence->positions as $position)
+                                                        <span>{{ $position->pivot->position_id }}</span>
+                                                        <span>{{ $position->pivot->org_id }}</span>
+                                                    @endforeach--}}
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <hr>
+                            @endforeach
+
+                            @if($evaluation->enough)
+                                <div class="form-group">
+                                    <div class="col-md-offset-3 col-md-4">
+                                        <a href="#" class="btn btn-block btn-primary" onclick="$('#form_start_evaluation').submit();">{!! trans('interface.start') !!}</a>
+                                    </div>
+                                </div>
+                            @endif
+
                         </form>
 
                     </div>
@@ -238,6 +264,11 @@
                     escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
                 });
             });
+
+
+            if($("#role option").length < 1) {
+                $('.role_form_group').hide();
+            }
 
 
         });

@@ -60,7 +60,7 @@
                         {
                             return $q->whereEvaluaterId($me->id);
                         })
-                        ->groupBy('competences.id')
+//                        ->groupBy('competences.id')
                         ->get();
                 ?>
 

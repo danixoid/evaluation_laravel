@@ -99,6 +99,8 @@
 
                         @if(count($competences) > 0)
                         <div class="container-fluid">
+
+                            {{ $competences->links() }}
                         @foreach($competences as $competence)
                             <p>{{--{{ $competence->id }}. --}}<strong>{{ $competence->name }}</strong></p>
                             <p>{{ $competence->note }}</p>
@@ -155,6 +157,7 @@
                             </form>
                             <hr />
                         @endforeach
+                            {{ $competences->links() }}
                         </div>
 
                         @else

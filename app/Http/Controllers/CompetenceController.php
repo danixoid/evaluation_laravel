@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CompetenceCreateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
 
 class CompetenceController extends Controller
 {
@@ -48,14 +49,14 @@ class CompetenceController extends Controller
         {
             if($org_id &&  $org_id > 0)
             {
-                $query = $query->whereHas('orgs',function($q) use ($org_id) {
+                $query = $query->whereHas('positions',function($q) use ($org_id) {
                     return $q->whereOrgId($org_id);
                 });
             }
 
             if($func_id &&  $func_id > 0)
             {
-                $query = $query->whereHas('funcs',function($q) use ($func_id) {
+                $query = $query->whereHas('positions',function($q) use ($func_id) {
                     return $q->whereFuncId($func_id);
                 });
             }
@@ -77,13 +78,13 @@ class CompetenceController extends Controller
                 });
         }
 
-        $competence = $query->whereCompetenceTypeId($type->id)->get();
+        $competence = $query->whereCompetenceTypeId($type->id)->paginate(20);
 
         if(request()->ajax()) {
             return response()->json(['competences' => $competence]);
         }
 
-        return view('competence.index',['competences' => $competence,'type' => $type]);
+        return view('competence.index',['competences' => $competence->appends(Input::except('page')),'type' => $type]);
     }
 
     /**

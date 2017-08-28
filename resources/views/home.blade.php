@@ -49,7 +49,7 @@
                 </div>
             </div>
             <div class="panel panel-default">
-                <div class="panel-heading">{!! trans('interface.evaluater_personal') !!}</div>
+                <div class="panel-heading">{!! trans('interface.evaluation_personal') !!}</div>
 
                 <div class="panel-body">
 

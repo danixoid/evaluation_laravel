@@ -34,42 +34,43 @@ class Evaluation extends Model
 
             }
         );
-
+/*
         static::updating(
             function($evaluation)
             {
 
                 $old = \App\Evaluation::find($evaluation->id);
 
-                if($evaluation->started && !$old->started)
-                // CHOOSE COMPETENCE FOR EVALUATION
-                $competences = \App\Competence::whereDoesntHave('positions')
-                    ->orWhereHas('positions',function($q) use ($evaluation)
-                    {
-                        return $q
-                            ->where('position_id',$evaluation->position_id)
-                            ->where('org_id',$evaluation->org_id)
-                            ->where(function($q) use ($evaluation) {
-                                return $q
-                                    ->where('func_id',$evaluation->func_id)
-                                    ->orWhereNull('func_id');
-                            });
-                    })
-                    ->get();
+                if($evaluation->started && !$old->started) {
+                    // CHOOSE COMPETENCE FOR EVALUATION
+                    $competences = \App\Competence::whereDoesntHave('positions')
+                        ->orWhereHas('positions',function($q) use ($evaluation)
+                        {
+                            return $q
+                                ->where('position_id',$evaluation->position_id)
+                                ->where('org_id',$evaluation->org_id)
+                                ->where(function($q) use ($evaluation) {
+                                    return $q
+                                        ->where('func_id',$evaluation->func_id)
+                                        ->orWhereNull('func_id');
+                                });
+                        })
+                        ->get();
 
-                foreach ($evaluation->evaluaters as $evaluater)
-                {
-                    foreach ($competences as $competence)
+                    foreach ($evaluation->evaluaters as $evaluater)
                     {
-                        $process = \App\EvalProcess::create([
-                            'evaluater_id' => $evaluater->id,
-                            'competence_id' => $competence->id,
-                        ]);
+                        foreach ($competences as $competence)
+                        {
+                            $process = \App\EvalProcess::create([
+                                'evaluater_id' => $evaluater->id,
+                                'competence_id' => $competence->id,
+                            ]);
+                        }
                     }
-                }
 
+                }
             }
-        );
+        );*/
     }
 
     public function evaluated()

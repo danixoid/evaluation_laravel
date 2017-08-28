@@ -113,6 +113,7 @@
                                 @endif
                             </div>
                         @endforeach
+                            {{ $evaluations->links() }}
                         </div>
 
                         @else

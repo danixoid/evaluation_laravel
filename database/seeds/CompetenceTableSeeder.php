@@ -176,5 +176,24 @@ class CompetenceTableSeeder extends Seeder
             }
         }
 
+
+        foreach (\App\Org::all() as $org) {
+            foreach (\App\Position::all() as $position) {
+                for($i = 0; $i < 5; $i++) {
+                    $profComp = factory(App\Competence::class)->create();
+                    $profComp->positions()->attach($profComp->id,['org_id' => $org->id,'position_id' => $position->id,]);
+
+                    $profComp->indicators()->delete();
+
+                    foreach (\App\EvalLevel::all() as $level)
+                    {
+                        factory(App\Indicator::class)->create([
+                            'eval_level_id' => $level->id,
+                            'competence_id' => $profComp->id
+                        ]);
+                    }
+                }
+            }
+        }
     }
 }

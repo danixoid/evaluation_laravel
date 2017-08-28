@@ -78,16 +78,19 @@
                                                 <tr>
                                                     <th>{{ trans('interface.user') }}</th>
                                                     <th>{{ trans('interface.role') }}</th>
+                                                    @if($evaluation->started)
+                                                        <th>{{ trans('interface.status') }}</th>
+                                                    @endif
                                                 </tr>
                                                 </thead>
                                                 <tbody>
                                                 @foreach($evaluation->evaluaters()->orderBy('eval_role_id')->get() as $evaluater)
                                                     <tr>
                                                         <td>{{ $evaluater->user->name }}</td>
-                                                        @if($evaluation->started)
-                                                            <td><a href="{!! route('evaluater.show',$evaluater->id) !!}">{{ $evaluater->role->name }}</a></td>
-                                                        @else
                                                         <td>{{ $evaluater->role->name }}</td>
+                                                        @if($evaluation->started)
+                                                            <td><a href="{!! route('evaluater.show',$evaluater->id)
+                                                            !!}">{{ trans('interface.'.($evaluater->finished ? "finished" : "not_finished")) }}</a></td>
                                                         @endif
                                                     </tr>
                                                 @endforeach

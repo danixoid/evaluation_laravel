@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\EvaluationCreateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
 
 class EvaluationController extends Controller
 {
@@ -60,7 +61,7 @@ class EvaluationController extends Controller
             return response()->json(['evaluations' => $evaluations]);
         }
 
-        return view('evaluation.index',['evaluations' => $evaluations]);
+        return view('evaluation.index',['evaluations' => $evaluations->appends(Input::except('page'))]);
     }
 
     /**
@@ -82,6 +83,10 @@ class EvaluationController extends Controller
     public function store(EvaluationCreateRequest $request)
     {
         $data = $request->all();
+
+        if($data['func_id'] == 0 || !$data['func_id']) {
+            unset($data['func_id']);
+        }
 
         $evaluation = \App\Evaluation::create($data);
 
@@ -140,7 +145,21 @@ class EvaluationController extends Controller
             abort(404);
         }
 
-        return view('evaluation.edit',['evaluation' => $evaluation]);
+        $competences = \App\Competence::whereDoesntHave('positions')
+            ->orWhereHas('positions',function($q) use ($evaluation)
+            {
+                return $q
+                    ->where('position_id',$evaluation->position_id)
+                    ->where('org_id',$evaluation->org_id)
+                    ->where(function($q) use ($evaluation) {
+                        return $q
+                            ->where('func_id',$evaluation->func_id)
+                            ->orWhereNull('func_id');
+                    });
+            })
+            ->get();
+
+        return view('evaluation.edit',['evaluation' => $evaluation,'competences' => $competences]);
     }
 
     /**
@@ -171,8 +190,25 @@ class EvaluationController extends Controller
                 ->with('warning',trans('interface.failure_save_evaluation'));
         }
 
-        $evaluation->started_at = \Carbon\Carbon::now();
-        $evaluation->save();
+        $comp_arr = $request->get('competences');
+
+        if(is_array($comp_arr))
+        {
+
+            foreach ($evaluation->evaluaters as $evaluater)
+            {
+                foreach ($comp_arr as $comp)
+                {
+                    $process = \App\EvalProcess::create([
+                        'evaluater_id' => $evaluater->id,
+                        'competence_id' => $comp,
+                    ]);
+                }
+            }
+
+            $evaluation->started_at = \Carbon\Carbon::now();
+            $evaluation->save();
+        }
 
         if($request->ajax()) {
             return response()->json([
