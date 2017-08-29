@@ -127,6 +127,13 @@ class EvaluationController extends Controller
     public function show($id)
     {
         $evaluation = \App\Evaluation::find($id);
+
+        if(\request()->has('type') && \request('type') == 'pdf')
+        {
+            $pdf = \PDF::loadView('pdf.evaluation',['evaluation' => $evaluation]);
+            return $pdf->stream('evaluation_'. $id . 'pdf');
+        }
+
         return view('evaluation.show',['evaluation' => $evaluation]);
     }
 

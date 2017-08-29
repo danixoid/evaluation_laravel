@@ -17,4 +17,9 @@ class EvalProcess extends Model
     {
         return $this->belongsTo(\App\EvalLevel::class,'eval_level_id');
     }
+
+    public function competence()
+    {
+        return $this->belongsTo(\App\Competence::class,'competence_id');
+    }
 }
