@@ -80,7 +80,8 @@
         $(document).ready(function() {
 
             var times = {{strtotime($ticket->started_at) * 1000 }} +
-                    {{ $ticket->quest->timer * 60 * 1000  }};
+                    {{ $ticket->quest->timer * 60 * 1000  }} +
+                    (new Date() - {{ strtotime(\Carbon\Carbon::now()) * 1000 }});
             var timerId = setInterval(function () {
                 if(times === 0) {
                     clearInterval(timerId);
