@@ -82,6 +82,31 @@
                         {!! trans('interface.'.$exam->status) !!}</h3>
                 </div>
 
+                @if(!$exam->finished && $exam->isUser)
+
+                    <div class="form-group">
+                        <h4>На каждый вопрос у вас будет определенное время:</h4>
+                        <ol>
+                        @foreach($exam->tickets as $ticket)
+                            <li>
+                            @if((strtotime($ticket->started_at ?: \Carbon\Carbon::now())
+                                + $ticket->quest->timer * 60)
+                                > strtotime(\Carbon\Carbon::now()))
+                            {{
+                            date('i:s',
+                            strtotime($ticket->started_at?:\Carbon\Carbon::now())-
+                            strtotime(\Carbon\Carbon::now())+
+                            $ticket->quest->timer * 60 )
+                            }}
+                            @endif
+                            </li>
+
+                        @endforeach
+                        </ol>
+                    </div>
+
+                @endif
+
                 @if(!$exam->isUser || $exam->finished)
 
                     <?php $inc_tic = 1 ?>
@@ -191,7 +216,7 @@
 
                         @if(!$exam->finished && $exam->isUser)
                         <div class="col-md-2">
-                            <a href="{!! route('ticket.index',['exam_id' => $exam->id]) !!}" class="delete btn btn-block btn-warning">{!! trans('interface.start') !!}</a>
+                            <a href="{!! route('ticket.index',['exam_id' => $exam->id]) !!}" class="btn btn-block btn-warning">{!! trans('interface.start') !!}</a>
                         </div>
                         @elseif(
                             $exam->finished && !$exam->amISigner &&
