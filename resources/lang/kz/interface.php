@@ -88,6 +88,10 @@ return [
     'print_to_pdf' => 'PDF-қа басып шығару',
     'home' => 'Бастапқы',
     'references' => 'Анықтамалықтар',
+    'list' => 'Список',
+    'generate_password' => 'Сгенерировать пароль',
+    'search_in_archive' => 'Искать в архиве',
+    'restore' => 'Восстановить',
 
     'quest' => 'Жағдай',
     'quests' => 'Жағдайлар',
@@ -107,7 +111,10 @@ return [
     'bad' => 'Нашар',
     'satisfy' => 'Қанағаттанарлық',
     'good' => 'Жақсы',
-
+    'funcs' => 'Функциональные направления',
+    'func' => 'Функциональное направление',
+    'to_archive' => 'В архив',
+    'help' => 'Помощь',
 
     // ROLES
     'employee' => 'Қызметкер',
@@ -121,6 +128,34 @@ return [
     'failure_save_quest' => 'жағдайды сақтау мүмкін емес',
     'success_deleted_quest' => 'Жағдай жойылды',
     'failure_deleted_quest' => 'Жағдайды жою мүмкін емес',
+    'success_restored_quest' => 'Ситуационная задача восстановлена',
+
+    //NEW WORDS FOR EVALUATION PERSONAL
+    'evaluation_personal' => 'Оценка персонала',
+    'evaluation_list' => 'Список',
+    'evaluation_type' => 'Градус оценки',
+    'evaluated' => 'Оцениваемый работник',
+    'evaluater' => 'Оценивающий работник',
+    'evaluaters' => 'Оценивающие работники',
+    'competence' => 'Компетенция',
+    'competences' => 'Компетенции',
+    'competence_type' => 'Вид компетенции',
+    'notes' => 'Описание',
+    'maximum' => 'Максимум',
+    'minimum' => 'Минимум',
+    'level' => 'Уровень',
+    'add_competences_line' => 'Добавляйте компетенции через построчно, через запятую указывайте комментарий',
+    'evaluation_started' => 'Оценка начата',
+    'evaluation_finished' => 'Оценка завершена',
+    'started' => 'Начато',
+    'finished' => 'Завершено',
+    'not_finished' => 'Не начато',
+    'status' => 'Статус',
+    'reports' => 'Отчеты',
+    'value' => 'Значение',
+    'remaining_time' => 'Құрметті кандидат бір ситуациялық есепті шешу үшін сізге 15 минут уақыт беріледі.',
+//    '' => '',
+
 
     // ORG
     'success_create_org' => 'Жаңа бөлім сәтті құрылды',
@@ -154,5 +189,40 @@ return [
     'success_deleted_exam' => 'Емтихан қағазы жойылды',
     'failure_deleted_exam' => 'Емтихан қағазын жою мүмкін емес',
 
+    // TICKET
+    'success_create_ticket' => 'Успешно создан билет',
+    'failure_create_ticket' => 'Не удалось создать билет',
+    'success_save_ticket' => 'Успешно сохранен билет',
+    'failure_save_ticket' => 'Не удалось сохранить билет',
+    'success_deleted_ticket' => 'Билет удален',
+    'failure_deleted_ticket' => 'Не удалось удалить билет',
+
+
+    // COMPETENCE
+    'success_create_competence' => 'Успешно создана новая компетенция',
+    'failure_create_competence' => 'Не удалось создать компетенцию',
+    'success_save_competence' => 'Успешно сохранена компетенция',
+    'failure_save_competence' => 'Не удалось сохранить компетенцию',
+    'success_deleted_competence' => 'Компетенция архивирована',
+    'failure_deleted_competence' => 'Не удалось удалить компетенцию',
+    'success_restored_competence' => 'Компетенция восстановлена',
+
+    // EVALUATION
+    'success_create_evaluation' => 'Успешно создан опросник',
+    'failure_create_evaluation' => 'Не удалось создать опросник',
+    'success_save_evaluation' => 'Успешно запущен опросник',
+    'failure_save_evaluation' => 'Не удалось запустить опросник',
+    'success_deleted_evaluation' => 'Опросник удален',
+    'failure_deleted_evaluation' => 'Не удалось удалить опросник',
+
+    // EVALUATER
+    'success_create_evaluater' => 'Успешно добавлен новый оценивающий работник',
+    'failure_create_evaluater' => 'Не удалось добавить оценивающего работника',
+    'success_deleted_evaluater' => 'Успешно удален оценивающий работник',
+    'failure_deleted_evaluater' => 'Не удалось удалить оценивающего работника',
+
+    // EVAL_PROCESS
+    'success_create_eval_process' => 'Успешно добавлены оценки работнику',
+    'failure_create_eval_process' => 'Не удалось добавить оценки работнику',
 
 ];

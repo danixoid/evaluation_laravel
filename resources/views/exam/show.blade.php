@@ -85,7 +85,8 @@
                 @if(!$exam->finished && $exam->isUser)
 
                     <div class="form-group">
-                        <h4>На каждый вопрос у вас будет определенное время:</h4>
+                        <h4>{{ trans('interface.remaining_time') }}</h4>
+                        {{--<h4>На каждый вопрос у вас будет определенное время:</h4>
                         <ol>
                         @foreach($exam->tickets as $ticket)
                             <li>
@@ -102,7 +103,7 @@
                             </li>
 
                         @endforeach
-                        </ol>
+                        </ol>--}}
                     </div>
 
                 @endif
