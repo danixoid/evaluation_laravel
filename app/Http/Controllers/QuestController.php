@@ -130,7 +130,7 @@ class QuestController extends Controller
             putenv('PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:'
                 . '/bin:/usr/games:/usr/local/games:/opt/node/bin');
             putenv('HOME=' . sys_get_temp_dir());
-            $shell = shell_exec("libreoffice --headless --convert-to  html:\"HTML (StarWriter)\" "
+            $shell = shell_exec(env('OFFICE_CMD','libreoffice'). " --headless --convert-to  html:\"HTML (StarWriter)\" "
                 . $path . " --outdir " . storage_path('app/word_files'));
 //            $shell = shell_exec("sudo /usr/bin/unoconv -f  html " . $path);
 
