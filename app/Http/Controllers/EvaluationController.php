@@ -6,6 +6,7 @@ use App\Http\Requests\EvaluationCreateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EvaluationController extends Controller
 {
@@ -30,6 +31,8 @@ class EvaluationController extends Controller
         $org_id = request('org_id');
         $func_id = request('func_id');
         $position_id = request('position_id');
+        $begin_at = \request('begin_at');
+        $end_at = \request('end_at');
 
         $query = \App\Evaluation::whereNotNull('created_at');
 
@@ -53,6 +56,14 @@ class EvaluationController extends Controller
 
         if($position_id &&  $position_id > 0) {
             $query = $query->wherePositionId($position_id);
+        }
+
+        if($begin_at) {
+            $query = $query->where('started_at','>',$begin_at);
+        }
+
+        if($end_at) {
+            $query = $query->where('started_at','<',$end_at);
         }
 
         $evaluations = $query->paginate(15);
@@ -82,6 +93,96 @@ class EvaluationController extends Controller
      */
     public function store(EvaluationCreateRequest $request)
     {
+        set_time_limit(60);
+
+        if($request->hasFile('file')) {
+            $path = $request->file('file')->getRealPath();
+            $data = Excel::load($path, function ($reader) {
+            })->get();
+
+//            dd($data);
+            if(!empty($data)) {
+
+                $i = 0;
+                foreach ($data->toArray() as $key => $value) {
+                    if (!empty($value)) {
+                        foreach ($value as $v) {
+
+                            $org = $v['strukturnoe_podrazdelenie']
+                                ? \App\Org::where('name','LIKE',$v['strukturnoe_podrazdelenie'])->first()
+                                : null;
+                            $func = $v['funtsionalnoe_napravlenie']
+                                ? \App\Func::where('name','LIKE',$v['funtsionalnoe_napravlenie'])->first()
+                                : null;
+                            $position = $v['dolzhnost']
+                                ? \App\Position::where('name','LIKE',$v['dolzhnost'])->first()
+                                : null;
+
+                            $evalType = \App\EvalType::where('name','LIKE', $v['vid_otsenki'].'%' ?: '180%')
+                                ->first();
+
+//                            dd([$org,$position]);
+
+                            $role = \App\Role::whereName('employee')->firstOrFail();
+
+
+                            $user = \App\User::whereIin($v['iin'])->first();
+                            if(!$user) {
+                                $user = new \App\User();
+                                $user->iin = $v['iin'];
+                                $user->email = $v['el.adres'];
+                                $user->password = bcrypt('12345');
+                            }
+                            $user->name = $v['fio'];
+                            $user->save();
+
+                            $user->roles()->detach();
+                            $user->roles()->attach($role);
+
+                            if( !$user || !$org || !$position)
+                            {
+                                continue;
+                            }
+
+                            $arr = [
+                                'org_id' => $org->id,
+                                'position_id' => $position->id
+                            ];
+
+                            if ($func) {
+                                $arr['func_id'] = $func->id;
+                            }
+
+                            $evaluation = new \App\Evaluation();
+                            $evaluation->user_id = $user->id;
+                            $evaluation->org_id = $org->id;
+                            $evaluation->position_id = $position->id;
+                            $evaluation->eval_type_id = $evalType->id;
+
+                            if ($func)
+                            {
+                                $evaluation->func = $org;
+                            }
+
+                            $evaluation->save();
+
+                            $i++;
+                        }
+                    }
+                }
+
+                return redirect()
+                    ->route('evaluation.index')
+                    ->with('success',trans('interface.imported_file',['num' => $i]));
+
+            }
+
+            return redirect()
+                ->route('evaluation.index')
+                ->with('warning',trans('interface.failure_create_evaluation'));
+
+        }
+
         $data = $request->all();
 
         if($data['func_id'] == 0 || !$data['func_id']) {

@@ -10,7 +10,7 @@ class Evaluation extends Model
     protected $fillable = ['org_id','position_id','func_id',
         'eval_type_id','user_id','started_at'];
 
-    protected $appends = ['started','is_total','enough'];
+    protected $appends = ['started','finished','is_total','enough'];
 
     protected static function boot()
     {
@@ -106,6 +106,19 @@ class Evaluation extends Model
     public function getStartedAttribute()
     {
         return $this->started_at != null;
+    }
+
+    public function getFinishedAttribute()
+    {
+        $totalRole = \App\EvalRole::whereCode('total')->first();
+        $evaluater = $this
+            ->evaluaters()
+            ->whereEvalRoleId($totalRole->id)
+            ->first();
+
+        if($evaluater) return  $evaluater->finished;
+
+        return false;
     }
 
     public function getIsTotalAttribute()

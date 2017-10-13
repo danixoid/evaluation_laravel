@@ -24,11 +24,12 @@ class EvaluationCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'int|min:1',
-            'eval_type_id' => 'int|min:1',
-            'org_id' => 'int|min:1',
-//            'func_id' => 'int|min:1',
-            'position_id' => 'int|min:1',
+            'file' => 'required_without:org_id,position_id,user_id,eval_type_id|file',
+            'user_id' => 'required_without:file|int|min:1',
+            'eval_type_id' => 'required_without:file|int|min:1',
+            'org_id' => 'required_without:file|int|min:1',
+//            'func_id' => 'required_without:file|int|min:1',
+            'position_id' => 'required_without:file|int|min:1',
         ];
     }
 }

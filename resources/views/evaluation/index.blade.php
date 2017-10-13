@@ -73,6 +73,22 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">{!! trans('interface.started_date') !!}</label>
+                                <div class="col-md-4">
+                                    <input type="date" class="form-control" value="{!! request('begin_at') !!}"
+                                           name="begin_at" id="begin_at" />
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="input-group">
+                                        <input type="date" class="form-control" value="{!! request('end_at') !!}"
+                                               name="end_at" id="end_at" />
+                                        <div class="input-group-btn">
+                                            <button type="submit" class="btn btn-info btn-block">{!! trans("interface.search") !!}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                         </form>
 
@@ -89,6 +105,15 @@
                                             {{ $evaluater->user->name }}
                                         </li>
                                     @endforeach
+                                    <li>
+                                        <strong>{{ trans('interface.status') }}</strong>
+                                        {{ $evaluation->finished
+                                            ? trans('interface.evaluation_finished')
+                                            : ($evaluation->started
+                                                ? trans('interface.started')
+                                                : trans('interface.not_started'))
+                                            }}
+                                    </li>
                                 </ul>
 
                                 <p>
@@ -224,6 +249,10 @@
                     $("#form_evaluation_search").submit();
                 });
             });
+
+//            $('[name="begin_at"],[name="end_at"]').on('change',function (ev) {
+//                $("#form_evaluation_search").submit();
+//            });
 
         });
 

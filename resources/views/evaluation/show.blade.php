@@ -24,6 +24,9 @@
                                     <a href="{!! route('evaluation.show',
                                         ['id'=>$evaluation->id,'type' => 'pdf']) !!}">{!! trans('interface.print_to_pdf') !!}</a> |
                                 @endif
+                                @if(!$evaluation->started)
+                                    <a href="{!! route('evaluation.edit',['id'=>$evaluation->id]) !!}">{!! trans('interface.edit') !!}</a> |
+                                @endif
                                 <a href="{!! route('evaluation.index') !!}" >{!! trans('interface.prev') !!}</a>
                             </div>
                         </div>
@@ -96,8 +99,15 @@
                                                         <td>{{ $evaluater->user->name }}</td>
                                                         <td>{{ $evaluater->role->name }}</td>
                                                         @if($evaluation->started)
-                                                            <td><a href="{!! route('evaluater.show',$evaluater->id)
-                                                            !!}">{{ trans('interface.'.($evaluater->finished ? "finished" : "not_finished")) }}</a></td>
+                                                            <td><a href="{!! route('evaluater.show',['id' => $evaluater->id]) !!}">
+                                                                <span class="text-{{ $evaluater->finished ? 'success' : 'danger'}}">
+                                                                {{ $evaluater->role->name }}
+                                                                    [{{ $evaluater->finished
+                                                                    ? trans('interface.finished')
+                                                                    : trans('interface.not_finished') }}]
+                                                                </span>
+                                                                </a>
+                                                            </td>
                                                         @endif
                                                     </tr>
                                                 @endforeach
@@ -106,13 +116,6 @@
                                         </div>
                                     </div>
 
-                                    @if(!$evaluation->started)
-                                    <div class="form-group">
-                                        <div class="col-md-offset-3 col-md-3">
-                                            <a href="{!! route('evaluation.edit',['id'=>$evaluation->id]) !!}" class="btn btn-block btn-danger" >{!! trans('interface.edit') !!}</a>
-                                        </div>
-                                    </div>
-                                    @endif
 
 
                                 </div>

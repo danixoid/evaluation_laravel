@@ -21,6 +21,7 @@
                             <label class="col-md-8">{!! trans('interface.evaluation_personal') !!}: {!! trans('interface.create') !!}</label>
                             <div class="col-md-4 text-right">
                                 <a href="#" onclick="$('#form_create_evaluation').submit();" >{!! trans('interface.create') !!}</a> |
+                                <a href="#" onclick="$('#form_import_evaluation').submit();" >{!! trans('interface.import') !!}</a> |
                                 <a href="{!! route('evaluation.index') !!}">{!! trans('interface.prev') !!}</a>
                             </div>
                         </div>
@@ -28,80 +29,113 @@
 
                     <div class="panel-body">
 
-                        <form id="form_create_evaluation" class="form-horizontal" action="{!! route('evaluation.store') !!}" method="POST">
-                            {!! csrf_field() !!}
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">{{ trans('interface.create') }}</a></li>
+                            <li role="presentation"><a href="#import" aria-controls="import" role="tab" data-toggle="tab">{{ trans('interface.import') }}</a></li>
+                        </ul>
 
-                            <div class="form-group">
-                                <label class="col-md-3 control-label">{!! trans('interface.evaluated') !!}</label>
-                                <div class="col-md-9">
-                                    <select class="form-control select2-single" name="user_id" id="user">
-                                    </select>
-                                </div>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+
+                            <!-- TAB 1 -->
+                            <div role="tabpanel" class="tab-pane active" id="home">
+                                <form id="form_create_evaluation" class="form-horizontal" action="{!! route('evaluation.store') !!}" method="POST">
+                                    {!! csrf_field() !!}
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">{!! trans('interface.evaluated') !!}</label>
+                                        <div class="col-md-9">
+                                            <select class="form-control select2-single" name="user_id" id="user">
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">{!! trans('interface.evaluation_type') !!}</label>
+                                        <div class="col-md-9">
+                                            <select class="form-control select2-single" name="eval_type_id">
+                                                @foreach(\App\EvalType::all() as $type)
+                                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">{!! trans('interface.org') !!}</label>
+                                        <div class="col-md-9">
+                                            <select class="form-control select2-single" name="org_id">
+                                                <option value="{!! old('org_id') ?: 0 !!}">{!! (old('org_id'))
+                                                ? \App\Org::find(old('org_id'))->name
+                                                : trans('interface.no_value') !!}</option>
+                                                @foreach(\App\Org::all() as $org)
+                                                    <option value="{{ $org->id }}">{{ $org->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">{!! trans('interface.func') !!}</label>
+                                        <div class="col-md-9">
+                                            <select class="form-control select2-single" name="func_id">
+                                                <option value="{!! old('func_id') ?: 0 !!}">{!! (old('func_id'))
+                                                ? \App\Func::find(old('func_id'))->name
+                                                : trans('interface.no_value') !!}</option>
+                                                @foreach(\App\Func::all() as $func)
+                                                    <option value="{{ $func->id }}">{{ $func->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">{!! trans('interface.position') !!}</label>
+                                        <div class="col-md-9">
+                                            <select class="form-control select2-single" name="position_id">
+                                                <option value="{!! old('position_id') ?: 0 !!}">{!! (old('position_id'))
+                                                ? \App\Position::find(old('position_id'))->name
+                                                : trans('interface.no_value') !!}</option>
+                                                @foreach(\App\Position::all() as $position)
+                                                    <option value="{{ $position->id }}">{{ $position->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+
+                                </form>
+
                             </div>
 
+                            <!-- TAB 2 -->
+                            <div role="tabpanel" class="tab-pane" id="import">
+                                <form id="form_import_evaluation" class="form-horizontal"  enctype="multipart/form-data"
+                                      action="{!! route('evaluation.store') !!}" method="POST">
+                                    {!! csrf_field() !!}
 
-                            <div class="form-group">
-                                <label class="col-md-3 control-label">{!! trans('interface.evaluation_type') !!}</label>
-                                <div class="col-md-9">
-                                    <select class="form-control select2-single" name="eval_type_id">
-                                        {{--<option value="{!! old('eval_type_id') ?: 0 !!}">{!! (old('eval_type_id'))--}}
-                                        {{--? \App\EvalType::find(old('eval_type_id'))->name--}}
-                                        {{--: trans('interface.no_value') !!}</option>--}}
-                                        @foreach(\App\EvalType::all() as $type)
-                                            <option value="{{ $type->id }}">{{ $type->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                                    <div class="form-group">
+                                        <div class="col-md-9 col-md-offset-3">
+                                            <input type="file" name="file" class="form-control" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-offset-3 col-md-3">
+                                            <button class="btn btn-block btn-danger" >{!! trans('interface.import') !!}</button>
+                                        </div>
+                                    </div>
+                                </form>
+
                             </div>
-
-                            <div class="form-group">
-                                <label class="col-md-3 control-label">{!! trans('interface.org') !!}</label>
-                                <div class="col-md-9">
-                                    <select class="form-control select2-single" name="org_id">
-                                        <option value="{!! old('org_id') ?: 0 !!}">{!! (old('org_id'))
-                                        ? \App\Org::find(old('org_id'))->name
-                                        : trans('interface.no_value') !!}</option>
-                                        @foreach(\App\Org::all() as $org)
-                                            <option value="{{ $org->id }}">{{ $org->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-3 control-label">{!! trans('interface.func') !!}</label>
-                                <div class="col-md-9">
-                                    <select class="form-control select2-single" name="func_id">
-                                        <option value="{!! old('func_id') ?: 0 !!}">{!! (old('func_id'))
-                                        ? \App\Func::find(old('func_id'))->name
-                                        : trans('interface.no_value') !!}</option>
-                                        @foreach(\App\Func::all() as $func)
-                                            <option value="{{ $func->id }}">{{ $func->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-3 control-label">{!! trans('interface.position') !!}</label>
-                                <div class="col-md-9">
-                                    <select class="form-control select2-single" name="position_id">
-                                        <option value="{!! old('position_id') ?: 0 !!}">{!! (old('position_id'))
-                                        ? \App\Position::find(old('position_id'))->name
-                                        : trans('interface.no_value') !!}</option>
-                                        @foreach(\App\Position::all() as $position)
-                                            <option value="{{ $position->id }}">{{ $position->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-
-
-                        </form>
+                        </div>
                     </div>
 
                     <div class="panel-footer">
                         <div class="text-right">
                             <a href="#" onclick="$('#form_create_evaluation').submit();" >{!! trans('interface.create') !!}</a> |
+                            <a href="#" onclick="$('#form_import_evaluation').submit();" >{!! trans('interface.import') !!}</a> |
                             <a href="{!! route('evaluation.index') !!}">{!! trans('interface.prev') !!}</a>
                         </div>
                     </div>

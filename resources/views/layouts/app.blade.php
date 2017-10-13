@@ -42,7 +42,7 @@
                     <ul class="nav navbar-nav">
                         @if(Auth::check() && Auth::user()->hasAnyRole(['admin','manager']))
 
-
+{{--
                             <li class="{!! preg_match("/exam|ticket/",request()->url()) ? "active" : "" !!} dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                     {{ trans('interface.quests_task') }} <span class="caret"></span>
@@ -52,27 +52,21 @@
                                     <li{!! preg_match("/exam/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('exam.index') }}">{!! trans('interface.exams') !!}</a></li>
                                     <li{!! preg_match("/quest/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('quest.index') }}">{!! trans('interface.tasks') !!}</a></li>
                                 </ul>
-                            </li>
+                            </li>--}}
+                            <li{!! preg_match("/evaluation/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('evaluation.index') }}">{{ trans('interface.evaluation_personal') }}</a></li>
 
-                            <li class="{!! preg_match("/competence|evaluation/",request()->url()) ? "active" : "" !!}  dropdown">
 
+                            <li class="{!! preg_match("/competence/",request()->url()) ? "active" : "" !!}  dropdown {{-- menu-item dropdown-submenu--}}">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                    {{ trans('interface.evaluation_personal') }} <span class="caret"></span>
+                                    {{ trans('interface.competences') }} <span class="caret"></span>
                                 </a>
 
                                 <ul class="dropdown-menu" role="menu">
-                                    <li{!! preg_match("/evaluation/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('evaluation.index') }}">{{ trans('interface.evaluation_list') }}</a></li>
-                                    <li class="{!! preg_match("/competence/",request()->url()) ? "active" : "" !!} menu-item dropdown dropdown-submenu">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                            {{ trans('interface.competences') }}
-                                        </a>
-
-                                        <ul class="dropdown-menu" role="menu">
-                                            @foreach(\App\CompetenceType::all() as $type)
-                                            <li{!! preg_match("/competence\/(.+)?type=$type->id/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('competence.index',["type=".$type->id]) }}">{{ $type->name }}</a></li>
-                                            @endforeach
-                                        </ul>
-                                    </li>{{--
+                                    @foreach(\App\CompetenceType::all() as $type)
+                                        <li{!! preg_match("/competence\/(.+)?type=$type->id/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('competence.index',["type=".$type->id]) }}">{{ $type->name }}</a></li>
+                                    @endforeach
+                                </ul>
+                            </li>{{--
                                     <li class="{!! preg_match("/evaluation\/report/",request()->url()) ? "active" : "" !!} menu-item dropdown dropdown-submenu">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                             {{ trans('interface.competences') }}
@@ -82,8 +76,6 @@
                                             <li{!! preg_match("/evaluation\/report\//",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('eval_report.index') }}">{{ trans('interface.evaluation_personal') }}</a></li>
                                         </ul>
                                     </li>--}}
-                                </ul>
-                            </li>
 
                             <li class="{!! preg_match("/org|position|func|user/",request()->url()) ? "active" : "" !!} dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -106,11 +98,11 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="nav navbar-nav navbar-right">
 
-                        @foreach(config()->get('app.locales') as $lang => $name)
+                        {{--@foreach(config()->get('app.locales') as $lang => $name)
                             @if($lang != config()->get('app.locale'))
                                 <li><a href="{{ route('lang',['lang' => $lang]) }}">{!! $name !!}</a></li>
                             @endif
-                        @endforeach
+                        @endforeach--}}
                         <!-- Authentication Links -->
                         @if (Auth::guest())
                             <li><a href="{{ route('login') }}">{!! trans('interface.login') !!}</a></li>

@@ -166,6 +166,14 @@
                         </form>
 
                     </div>
+                    <div class="panel-footer">
+                        <div class="text-right">
+                            @if($evaluation->enough)
+                                <a href="javascript:$('#form_start_evaluation').submit();">{!! trans('interface.start') !!}</a> |
+                            @endif
+                            <a href="{!! route('evaluation.show',['id'=>$evaluation->id]) !!}" >{!! trans('interface.prev') !!}</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
