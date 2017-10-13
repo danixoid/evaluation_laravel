@@ -16,16 +16,16 @@ class CreateEvalProcessesTable extends Migration
         Schema::create('eval_processes', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('evaluater_id');
-            $table->unsignedInteger('competence_id');
+            $table->unsignedInteger('indicator_id');
             $table->unsignedInteger('eval_level_id')->nullable();
             $table->timestamps();
 
             $table
-                ->unique(['evaluater_id','competence_id']);
+                ->unique(['evaluater_id','indicator_id']);
             $table->foreign('evaluater_id')
                 ->references('id')->on('evaluaters');
-            $table->foreign('competence_id')
-                ->references('id')->on('competences');
+            $table->foreign('indicator_id')
+                ->references('id')->on('indicators');
             $table->foreign('eval_level_id')
                 ->references('id')->on('eval_levels');
         });

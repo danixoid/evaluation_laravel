@@ -12,7 +12,15 @@
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
-                    <div class="panel-heading">{{ $competence->type->note }} | {!! trans('interface.edit') !!}</div>
+                    <div class="panel-heading">
+                        <div class="row">
+                            <label class="col-md-8">{{ $competence->type->note }} | {!! trans('interface.edit') !!}</label>
+                            <div class="col-md-4 text-right">
+                                <a href="#" onclick="$('#form_create_competence').submit();" >{!! trans('interface.update') !!}</a> |
+                                <a href="{!! route('competence.show',['id'=>$competence->id]) !!}">{!! trans('interface.prev') !!}</a>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="panel-body">
 
@@ -35,17 +43,51 @@
                                 </div>
                             </div>
 
-                            @foreach($competence->indicators as $indicator)
                             <div class="form-group">
-                                <label class="col-md-3 control-label">{{ $indicator->evalLevel->name }}</label>
-                                <div class="col-md-9">
-                                    <textarea name="indicator[{{ $indicator->id }}].name"
-                                              placeholder="{{ $indicator->evalLevel->note }}"
-                                              rows="3" class="form-control" required>{!! $indicator->name !!}</textarea>
+                                <label class="col-md-3 control-label">{!! trans('interface.indicators') !!}</label>
+                                <div class="col-md-9 form-control-static" id="indicators">
+                                    <ol>
+                                        @foreach($competence->indicators as $indicator)
+                                            <li>
+                                                <input type="hidden" name="indicator[{!! $indicator->id !!}][name]" value="{!! $indicator->name !!}"/>
+                                                <input type="hidden" name="indicator[{!! $indicator->id !!}][id]" value="{!! $indicator->id !!}"/>
+                                                {{ $indicator->name }}
+                                                <a href="#" class="removeIndicator">{{ trans('interface.destroy') }}</a>
+                                            </li>
+                                        @endforeach
+                                    </ol>
                                 </div>
                             </div>
-                            @endforeach
 
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">{!! trans('interface.deleted') !!}</label>
+                                <div class="col-md-9 form-control-static" id="indicatorsDeleted">
+                                    <ol>
+                                        @foreach($competence->indicators()->onlyTrashed()->get() as $indicator)
+                                            <li>
+                                                <input type="hidden" disabled="disabled" name="indicator[{!! $indicator->id !!}][name]" value="{!! $indicator->name !!}"/>
+                                                <input type="hidden" disabled="disabled" name="indicator[{!! $indicator->id !!}][id]" value="{!! $indicator->id !!}"/>
+                                                <i class="text-danger">{{ $indicator->name }}</i>
+                                                <a href="#" class="restoreIndicator">{{ trans('interface.restore') }}</a>
+                                            </li>
+                                        @endforeach
+                                    </ol>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">{!! trans('interface.new_indicator') !!}</label>
+                                <div class="col-md-9">
+                                    <textarea placeholder="{!! trans('interface.new_indicator') !!}"
+                                              rows="3" class="form-control" id="indicator_name"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-offset-3 col-md-2">
+                                    <button type="button" id="addIndicator" class="btn btn-block btn-info" >{!! trans('interface.add') !!}</button>
+                                </div>
+                            </div>
 
                             @if($competence->type->prof)
                             <div class="form-group">
@@ -127,18 +169,14 @@
                             </div>
                             @endif
 
-                            <div class="form-group">
-                                <div class="col-md-offset-3 col-md-3">
-                                    <button class="btn btn-block btn-danger" >{!! trans('interface.update') !!}</button>
-                                </div>
-                                <div class=" col-md-3">
-                                    <a href="{!! route('competence.show',['id'=>$competence->id]) !!}" class="btn btn-block btn-primary">{!! trans('interface.prev') !!}</a>
-                                </div>
-
-                            </div>
-
 
                         </form>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="text-right">
+                            <a href="#" onclick="$('#form_create_competence').submit();" >{!! trans('interface.update') !!}</a> |
+                            <a href="{!! route('competence.show',['id'=>$competence->id]) !!}">{!! trans('interface.prev') !!}</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -232,21 +270,38 @@
         });
 
 
-       /* tinymce.init({
-            selector: '#note',  // change this value according to your HTML
-            language: '{!! config('app.locale') == "kz" ? "kk" : config('app.locale')!!}',
-            menubar : false,
-            plugins: [
-                "link image code fullscreen imageupload table"
-            ],
-            toolbar: "undo redo | bold italic | bullist numlist outdent indent | link image " +
-                "| imageupload | code | fullscreen  | table",
-            relative_urls: false,
-            image_list: "{!! route('images.list') !!}",
-            table_advtab: true,
+        $('#addIndicator').on('click',function(ev) {
+            ev.preventDefault();
+            $('#indicators ol').append('<li><input type="hidden" name="indicator[][name]" value="' +
+                $('#indicator_name').val() + '" />' + $('#indicator_name').val() +
+                ' <a href="#" class="removeIndicator">{{ trans('interface.destroy') }}</a>' +
+                '</li>');
+            $('#indicator_name').val('');
+        });
+
+        $(document).on('click', '.removeIndicator', function(ev) {
+            ev.preventDefault();
+            if($(this).parent().find('[name$="[id]"]').length > 0) {
+                $(this).parent().find('a').removeClass('removeIndicator');
+                $(this).parent().find('a').addClass('restoreIndicator');
+                $(this).parent().find('a').text('{{ trans('interface.restore') }}');
+                $(this).parent().appendTo("#indicatorsDeleted ol");
+                $(this).parent().find('[name^="indicator"]').attr('disabled',true);
+            } else {
+                $(this).parent().remove();
+            }
+        });
 
 
-        });*/
+        $(document).on('click', '.restoreIndicator', function(ev) {
+            ev.preventDefault();
+            $(this).parent().find('a').removeClass('restoreIndicator');
+            $(this).parent().find('a').addClass('removeIndicator');
+            $(this).parent().find('a').text('{{ trans('interface.destroy') }}');
+            $(this).parent().appendTo("#indicators ol");
+            $(this).parent().find('[name^="indicator"]').removeAttr('disabled');
+        });
+
     </script>
 
 @endsection

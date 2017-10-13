@@ -25,7 +25,7 @@
                             <?php $num = 1; ?>
                             @foreach($exams as $exam)
                                 <tr>
-                                    <td>{!! $num++ !!}
+                                    <td>{!! $num++ !!}</td>
                                     <td>
                                         <span class="text-info">{!! $exam->org->name !!}</span><span
                                                 class="text-primary">{{ $exam->func ? "/".$exam->func->name : "" }}</span>

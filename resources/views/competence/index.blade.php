@@ -104,14 +104,13 @@
                         @foreach($competences as $competence)
                             <p>{{--{{ $competence->id }}. --}}<strong>{{ $competence->name }}</strong></p>
                             <p>{{ $competence->note }}</p>
-                            <ul class="list-group list-unstyled">
+                            <ol class="list-group">
                                 @foreach($competence->indicators as $indicator)
                                     <li>
-                                        <strong>{{ $indicator->level->name }}</strong>
-                                        {{ $indicator->name }}
+                                        <strong>{{ $indicator->name }}</strong>
                                     </li>
                                 @endforeach
-                            </ul>
+                            </ol>
 
                             @if($competence->positions()->count() > 0)
                             <div class="table-responsive">

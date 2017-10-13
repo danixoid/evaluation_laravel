@@ -16,7 +16,15 @@
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
-                    <div class="panel-heading">{!! trans('interface.evaluation_personal') !!}: {!! trans('interface.create') !!}</div>
+                    <div class="panel-heading">
+                        <div class="row">
+                            <label class="col-md-8">{!! trans('interface.evaluation_personal') !!}: {!! trans('interface.create') !!}</label>
+                            <div class="col-md-4 text-right">
+                                <a href="#" onclick="$('#form_create_evaluation').submit();" >{!! trans('interface.create') !!}</a> |
+                                <a href="{!! route('evaluation.index') !!}">{!! trans('interface.prev') !!}</a>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="panel-body">
 
@@ -86,18 +94,16 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <div class="col-md-offset-3 col-md-3">
-                                    <button class="btn btn-block btn-danger" >{!! trans('interface.next') !!}</button>
-                                </div>
-                                <div class=" col-md-3">
-                                    <a href="{!! route('evaluation.index') !!}" class="btn btn-block btn-warning">{!! trans('interface.prev') !!}</a>
-                                </div>
-
-                            </div>
 
 
                         </form>
+                    </div>
+
+                    <div class="panel-footer">
+                        <div class="text-right">
+                            <a href="#" onclick="$('#form_create_evaluation').submit();" >{!! trans('interface.create') !!}</a> |
+                            <a href="{!! route('evaluation.index') !!}">{!! trans('interface.prev') !!}</a>
+                        </div>
                     </div>
                 </div>
             </div>

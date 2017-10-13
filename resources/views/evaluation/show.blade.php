@@ -19,12 +19,12 @@
                     <div class="panel-heading">
                         <div class="row">
                             <label class="col-md-8">{{ $evaluation->evaluated->name }} | {{ $evaluation->type->name }}</label>
-                            <div class="col-md-2 text-right">
+                            <div class="col-md-4 text-right">
+                                @if($evaluation->started)
+                                    <a href="{!! route('evaluation.show',
+                                        ['id'=>$evaluation->id,'type' => 'pdf']) !!}">{!! trans('interface.print_to_pdf') !!}</a> |
+                                @endif
                                 <a href="{!! route('evaluation.index') !!}" >{!! trans('interface.prev') !!}</a>
-                            </div>
-                            <div class="col-md-2 text-right">
-                                <a href="{!! route('evaluation.show',
-                                    ['id'=>$evaluation->id,'type' => 'pdf']) !!}">{!! trans('interface.print_to_pdf') !!}</a>
                             </div>
                         </div>
                     </div>
@@ -34,7 +34,9 @@
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs" role="tablist">
                             <li role="presentation"  class="active"><a href="#evaluaters" aria-controls="evaluaters" role="tab" data-toggle="tab">{{ trans('interface.evaluaters') }}</a></li>
-                            <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab">{{ trans('interface.reports') }}</a></li>
+                            @if($evaluation->started)
+                                <li role="presentation"><a href="#reports" aria-controls="reports" role="tab" data-toggle="tab">{{ trans('interface.reports') }}</a></li>
+                            @endif
                         </ul>
 
                         <!-- Tab panes -->
@@ -116,9 +118,11 @@
                                 </div>
                             </div>
 
-                            <div role="tabpanel" class="tab-pane fade" id="reports">
-                                @include("evaluation.reports")
-                            </div>
+                            @if($evaluation->started)
+                                <div role="tabpanel" class="tab-pane fade" id="reports">
+                                        @include("evaluation.reports")
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

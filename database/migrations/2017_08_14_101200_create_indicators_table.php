@@ -16,19 +16,14 @@ class CreateIndicatorsTable extends Migration
         Schema::create('indicators', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('competence_id');
-            $table->unsignedInteger('eval_level_id')->nullable();
             $table->text('name');
+            $table->softDeletes();
             $table->timestamps();
-
-            $table->unique(['competence_id','eval_level_id']);
 
             $table->foreign('competence_id')
                 ->references('id')
                 ->on('competences');
 
-            $table->foreign('eval_level_id')
-                ->references('id')
-                ->on('eval_levels');
         });
     }
 

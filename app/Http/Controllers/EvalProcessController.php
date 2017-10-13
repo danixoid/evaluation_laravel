@@ -42,7 +42,9 @@ class EvalProcessController extends Controller
 //        try {
             foreach ($data['process'] as $id => $process)
             {
-                $evalProcesses = \App\EvalProcess::updateOrCreate(['id' => $id], $process);
+                if($process['eval_level_id'] > 0) {
+                    $evalProcesses = \App\EvalProcess::updateOrCreate(['id' => $id], $process);
+                }
             }/*
         } catch (\Exception $e) {
             $evalProcesses = null;
@@ -71,9 +73,16 @@ class EvalProcessController extends Controller
             ]);
         }
 
+        if($evalProcesses->evaluater->finished) {
+            return redirect()
+                ->route('index')
+                ->with('message', trans('interface.success_create_eval_process'));
+        }
+
         return redirect()
             ->back()
-            ->with('message',trans('interface.success_create_eval_process'));
+            ->with('message', trans('interface.success_create_eval_process'));
+
     }
 
     /**

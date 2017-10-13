@@ -134,14 +134,11 @@ class CompetenceController extends Controller
         if(isset($data['indicator']) && is_array($data['indicator'])) {
             $indicators = $data['indicator'];
 
-            foreach ($indicators as $key => $val) {
-                $indicator = \App\Indicator::firstOrNew([
-                    'competence_id' => $competence->id,
-                    'eval_level_id' => $key,
-                ]);
-                $indicator->name = $val;
-                $indicator->save();
+            for ($i=0;$i<count($indicators);$i++) {
+                $indicators[$i]['competence_id'] = $competence->id;
+                \App\Indicator::create($indicators[$i]);
             }
+
         }
 
         if(isset($data['struct']) && is_array($data['struct'])) {
@@ -223,8 +220,22 @@ class CompetenceController extends Controller
         if(isset($data['indicator']) && is_array($data['indicator'])) {
             $indicators = $data['indicator'];
 
-            foreach ($indicators as $key => $val) {
-                $indicator = \App\Indicator::updateOrCreate(['id' => $key], ['name' => $val]);
+            $ids = [];
+//            dd($indicators);
+
+            \App\Indicator::whereCompetenceId($id)->delete();
+
+            foreach($indicators as $indicator) {
+
+                if(array_key_exists('id',$indicator)) {
+                    \App\Indicator::withTrashed()->find($indicator['id'])->restore();
+                } else {
+                    $ind = \App\Indicator::create([
+                        'competence_id' => $id,
+                        'name' => $indicator['name']
+                    ]);
+//                    \App\Indicator::find($ind->id)->restore();
+                }
             }
         }
 

@@ -18,8 +18,11 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <div class="row">
-                            <label class="col-md-10">{{ $evaluation->evaluated->name }} | {{ $evaluation->type->name }}</label>
-                            <div class="col-md-2 text-right">
+                            <label class="col-md-8">{{ $evaluation->evaluated->name }} | {{ $evaluation->type->name }}</label>
+                            <div class="col-md-4 text-right">
+                                @if($evaluation->enough)
+                                    <a href="javascript:$('#form_start_evaluation').submit();">{!! trans('interface.start') !!}</a> |
+                                @endif
                                 <a href="{!! route('evaluation.show',['id'=>$evaluation->id]) !!}" >{!! trans('interface.prev') !!}</a>
                             </div>
                         </div>
@@ -159,14 +162,6 @@
                                 </div>
                                 <hr>
                             @endforeach
-
-                            @if($evaluation->enough)
-                                <div class="form-group">
-                                    <div class="col-md-offset-3 col-md-4">
-                                        <a href="#" class="btn btn-block btn-primary" onclick="$('#form_start_evaluation').submit();">{!! trans('interface.start') !!}</a>
-                                    </div>
-                                </div>
-                            @endif
 
                         </form>
 

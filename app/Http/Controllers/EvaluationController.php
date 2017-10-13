@@ -204,11 +204,12 @@ class EvaluationController extends Controller
 
             foreach ($evaluation->evaluaters as $evaluater)
             {
-                foreach ($comp_arr as $comp)
-                {
+                foreach (\App\Indicator::whereIn('competence_id',$comp_arr)
+                             ->orderBy('competence_id')
+                             ->get() as $ind) {
                     $process = \App\EvalProcess::create([
                         'evaluater_id' => $evaluater->id,
-                        'competence_id' => $comp,
+                        'indicator_id' => $ind->id,
                     ]);
                 }
             }

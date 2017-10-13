@@ -149,11 +149,11 @@ class CompetenceTableSeeder extends Seeder
         $typeCorp->note = "Корпоративные компетенции";
         $typeCorp->save();
 
-//        $typeMan = new \App\CompetenceType();
-//        $typeMan->name = "Управленческие";
-//        $typeMan->note = "Управленческие компетенции";
-//        $typeMan->chief = true;
-//        $typeMan->save();
+        $typeMan = new \App\CompetenceType();
+        $typeMan->name = "Управленческие";
+        $typeMan->note = "Управленческие компетенции";
+        $typeMan->chief = true;
+        $typeMan->save();
 
         $typeProf = new \App\CompetenceType();
         $typeProf->name = "Профессиональные";
@@ -161,17 +161,19 @@ class CompetenceTableSeeder extends Seeder
         $typeProf->prof = true;
         $typeProf->save();
 
-        foreach ($corp as $el)
+        foreach ($corp as $key => $el)
         {
             $comp = new \App\Competence();
-            $comp->competence_type_id = $typeCorp->id;
+            $comp->competence_type_id = $key < 4 ? $typeMan->id : $typeCorp->id ;
             $comp->name = $el[0];
             $comp->note = $el[1];
             $comp->save();
 
-            foreach ($comp->indicators as $indicator)
+            foreach ($el[2] as $el_ind)
             {
-                $indicator->name = $el[2][$indicator->level->level - 1];
+                $indicator = new \App\Indicator();
+                $indicator->competence_id = $comp->id;
+                $indicator->name = $el_ind;
                 $indicator->save();
             }
         }
@@ -179,18 +181,13 @@ class CompetenceTableSeeder extends Seeder
 
         foreach (\App\Org::all() as $org) {
             foreach (\App\Position::all() as $position) {
-                for($i = 0; $i < 5; $i++) {
+                for($i = 0; $i < 2; $i++) {
                     $profComp = factory(App\Competence::class)->create();
                     $profComp->positions()->attach($profComp->id,['org_id' => $org->id,'position_id' => $position->id,]);
 
-                    $profComp->indicators()->delete();
-
-                    foreach (\App\EvalLevel::all() as $level)
+                    for ($i=0;$i<rand(3,6);$i++)
                     {
-                        factory(App\Indicator::class)->create([
-                            'eval_level_id' => $level->id,
-                            'competence_id' => $profComp->id
-                        ]);
+                        factory(App\Indicator::class)->create([ 'competence_id' => $profComp->id ]);
                     }
                 }
             }

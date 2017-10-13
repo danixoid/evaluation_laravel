@@ -22,14 +22,18 @@
 
                         <div class="form-group">
                             <div class="col-md-offset-2 col-md-10 form-control-static">
-                                <ul class="list-group list-unstyled">
+                                <ol class="list-group">
                                 @foreach($competence->indicators as $indicator)
                                     <li>
-                                        <strong>{{ $indicator->level->name }}</strong><br />
-                                        {{ $indicator->name }}
+                                        <strong>{{ $indicator->name }}</strong>
                                     </li>
                                 @endforeach
-                                </ul>
+                                @foreach($competence->indicators()->onlyTrashed()->get() as $indicator)
+                                    <li>
+                                        <i>{{ $indicator->name }} [{{ trans('interface.deleted') }}]</i>
+                                    </li>
+                                @endforeach
+                                </ol>
                             </div>
                         </div>
 

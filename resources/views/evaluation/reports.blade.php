@@ -23,27 +23,38 @@
         <tbody>
         <?php
         $i = 1;
-        $totalRole = \App\EvalRole::whereCode('total')->firstOrFail();
-        $totalProcess = $evaluation->evaluaters()
+        $totalRole = \App\EvalRole::whereCode('total')->first();
+        $totalEvaluater = $evaluation->evaluaters()
             ->where('eval_role_id',$totalRole->id)
             ->first();
+        $compList = \App\Indicator::whereIn('id',$totalEvaluater->processes()->pluck('indicator_id'))
+            ->pluck('competence_id');
+        $competences = \App\Competence::whereCompetenceTypeId($type->id)->whereIn('id',$compList)->get();
         ?>
-        @foreach($totalProcess->processes()
-                ->whereIn('competence_id',
-                    \App\Competence::where('competence_type_id',
-                    $type->id)->pluck('id'))->get() as $process)
+        @foreach($competences as $competence)
             <tr>
                 <td>{{ $i++ }}</td>
-                <td>{{ $process->competence->name }}</td>
+                <td>{{ $competence->name }}</td>
                 @foreach($evaluation->evaluaters()
                     ->orderBy('eval_role_id')
                     ->get() as $evaluater)
-                    @foreach($evaluater
+                    <?php
+                    $average = $evaluater
                         ->processes()
-                        ->whereCompetenceId($process->competence_id)
-                        ->get() as $thisProcess)
-                        <td align="center">{{ $thisProcess->level ? $thisProcess->level->level : ""}}</td>
-                    @endforeach
+                        ->whereHas('indicator',function($q) use ($competence) {
+                            return $q->whereCompetenceId($competence->id);
+                        })
+                        ->avg('eval_level_id');
+
+                    $level = null;
+
+                    if ($average > 0) {
+                        $level = \App\EvalLevel::where('min','<',$average)
+                            ->where('max','>=',$average)
+                            ->first();
+                    }
+                    ?>
+                    <td align="center"><strong>{{ $level ? $level->level : 0 }}</strong> ({{ round($average,2) }})</td>
                 @endforeach
             </tr>
         @endforeach

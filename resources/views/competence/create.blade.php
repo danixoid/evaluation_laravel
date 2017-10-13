@@ -31,19 +31,41 @@
                             <div class="form-group">
                                 <label class="col-md-3 control-label">{!! trans('interface.notes') !!}</label>
                                 <div class="col-md-9">
-                                    <textarea id="note" placeholder="{{ trans('interface.notes') }}" rows="6" class="form-control" name="note" required>{!! old('name') !!}</textarea>
+                                    <textarea id="note" placeholder="{{ trans('interface.notes') }}" rows="6"
+                                              class="form-control" name="note" required>{!! old('name') !!}</textarea>
                                 </div>
                             </div>
 
-                            @foreach(\App\EvalLevel::all() as $lvl)
-                                <div class="form-group">
-                                    <label class="col-md-3 control-label">{{ $lvl->name }}</label>
-                                    <div class="col-md-9">
-                                        <textarea name="indicator[{{ $lvl->id }}].name" placeholder="{{ $lvl->note }}"
-                                                  rows="3" class="form-control" required>{!! old('indicator['.$lvl->id.'].name') !!}</textarea>
-                                    </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">{!! trans('interface.indicators') !!}</label>
+                                <div class="col-md-9 form-control-static" id="indicators">
+                                    <ol>
+                                        @if(is_array(old('indicator')))
+                                            @foreach(old('indicator') as $indicator)
+                                                <li>
+                                                    <input type="hidden" name="indicator[][name]" value="{!! $indicator->name !!}"/>
+                                                    {{ $indicator->name }}
+                                                    <a href="#" class="removeIndicator">{{ trans('interface.destroy') }}</a>
+                                                </li>
+                                            @endforeach
+                                        @endif
+                                    </ol>
                                 </div>
-                            @endforeach
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">{!! trans('interface.new_indicator') !!}</label>
+                                <div class="col-md-9">
+                                    <textarea placeholder="{!! trans('interface.new_indicator') !!}"
+                                              rows="3" class="form-control" id="indicator_name"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-offset-3 col-md-2">
+                                    <button type="button" id="addIndicator" class="btn btn-block btn-info" >{!! trans('interface.add') !!}</button>
+                                </div>
+                            </div>
 
                             @if($type->prof)
                                 <div class="form-group">
@@ -111,7 +133,7 @@
 
                             <div class="form-group">
                                 <div class="col-md-offset-3 col-md-3">
-                                    <button class="btn btn-block btn-danger" >{!! trans('interface.add') !!}</button>
+                                    <button class="btn btn-block btn-danger" >{!! trans('interface.save') !!}</button>
                                 </div>
                                 <div class=" col-md-3">
                                     <a href="{!! route('competence.index',['type'=>$type->id]) !!}" class="btn btn-block btn-warning">{!! trans('interface.prev') !!}</a>
@@ -211,24 +233,22 @@
 //                $("#org").select2('open');
             });
 
+
+            $('#addIndicator').on('click',function(ev) {
+                $('#indicators ol').append('<li><input type="hidden" name="indicator[][name]" value="' +
+                    $('#indicator_name').val() + '" />' + $('#indicator_name').val() +
+                    ' <a href="#" class="removeIndicator">{{ trans('interface.destroy') }}</a>' +
+                    '</li>');
+                $('#indicator_name').val('');
+            });
+
+            $(document).on('click', '.removeIndicator', function(ev) {
+                $(this).parent().remove();
+            });
+
         });
 
 
-        /* tinymce.init({
-             selector: '#note',  // change this value according to your HTML
-             language: '{!! config('app.locale') == "kz" ? "kk" : config('app.locale')!!}',
-            menubar : false,
-            plugins: [
-                "link image code fullscreen imageupload table"
-            ],
-            toolbar: "undo redo | bold italic | bullist numlist outdent indent | link image " +
-                "| imageupload | code | fullscreen  | table",
-            relative_urls: false,
-            image_list: "{!! route('images.list') !!}",
-            table_advtab: true,
-
-
-        });*/
     </script>
 
 @endsection

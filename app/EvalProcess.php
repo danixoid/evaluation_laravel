@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EvalProcess extends Model
 {
-    protected $fillable = ['competence_id','eval_level_id','evaluater_id'];
+    protected $fillable = ['indicator_id','eval_level_id','evaluater_id'];
 
     public function evaluater()
     {
@@ -18,8 +18,18 @@ class EvalProcess extends Model
         return $this->belongsTo(\App\EvalLevel::class,'eval_level_id');
     }
 
-    public function competence()
+    public function indicator()
     {
-        return $this->belongsTo(\App\Competence::class,'competence_id');
+        return $this
+            ->belongsTo(\App\Indicator::class,'indicator_id')
+            ->withTrashed();
+    }
+
+    public function competences()
+    {
+        return $this
+            ->hasManyThrough(\App\Competence::class,\App\Indicator::class,
+                'competence_id','id','indicator_id')
+            ->withTrashed();
     }
 }

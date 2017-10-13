@@ -9,9 +9,6 @@
 
 @section('content')
 
-    <?php $user_id = request('user_id') ?: '0'; ?>
-    <?php $chief_id = request('chief_id') ?: '0'; ?>
-
     <div class="container-fluid">
         <div class="alert alert-success">
             <p>{{ $evaluation->evaluated->name }} | {{ $evaluation->type->name }}</p>
@@ -48,92 +45,116 @@
               action="{!! route('evalprocess.store') !!}" method="POST">
             {!! csrf_field() !!}
             <table class="table table-bordered">
-                @foreach(\App\CompetenceType::all() as $type)
-                <tr style="background-color: #1d5020;color:white;">
-                    <th colspan="10">
-                        {{ $type->note }}
-                    </th>
-                </tr>
-                <?php
-                    $competences = \App\Competence::whereCompetenceTypeId($type->id)
-                        ->whereHas('processes',function($q) use ($me)
-                        {
-                            return $q->whereEvaluaterId($me->id);
-                        })
-//                        ->groupBy('competences.id')
-                        ->get();
-                ?>
+            <?php
+                $processes = $me
+                    ->processes()
+                    ->select('eval_processes.*')
+//                    ->with('level')
+//                    ->with('indicator')
+//                    ->with('indicator.competence')
+//                    ->with('indicator.competence.type')
+                    ->leftJoin('eval_levels','eval_levels.id','=','eval_level_id')
+                    ->leftJoin('indicators','indicators.id','=','indicator_id')
+                    ->leftJoin('competences','competences.id','=','competence_id')
+                    ->leftJoin('competence_types','competence_types.id','=','competence_type_id')
+                    ->orderBy('competence_type_id')
+                    ->orderBy('competence_id')
+                    ->orderBy('indicator_id')
+                    ->get();
+                $type_id = 0;
+                $competence_id = 0;
+                $levels = \App\EvalLevel::all();
+                $evaluaters = $evaluation->evaluaters()->orderBy('eval_role_id')->get();
+            ?>
+                @foreach($processes as $process)
+                    @if($process->indicator->competence->type->id !== $type_id)
+                        <?php
+                        $type_id = $process->indicator->competence->type->id;
+                        ?>
+                        <tr style="background-color: #1d5020;color:white;">
+                            <th colspan="50">
+                                {{ $process->indicator->competence->type->note }}
+                            </th>
+                        </tr>
+                    @endif
 
-                    @foreach($competences as $competence)
+                    @if($process->indicator->competence->id !== $competence_id)
+                        <?php
+                        $competence_id = $process->indicator->competence->id;
+                        ?>
                         <tr style="background-color: #2aabd2;color:white;">
-                            <th>{{ trans('interface.level') }}</th>
-                            <th>{{ $competence->name }}</th>
+                            <th>{{ $process->indicator->competence->name }}</th>
 
-                            @foreach($evaluation->evaluaters as $evaluater)
+                            @foreach($evaluaters as $evaluater)
                                 @if($me->user->hasAnyRole(['admin']) ||
                                     $evaluater->id == $me->id ||
                                     ($me->role->code == 'total'))
-                                <td align="center">
-                                    {{ $evaluater->role->name }}
-                                    @if(\Auth::user()->hasAnyRole(['admin']))
-                                        {{ $evaluater->user->name }}
-                                    @endif
-                                </td>
+                                    <td align="center">
+                                        {{ $evaluater->role->name }}
+                                        @if(\Auth::user()->hasAnyRole(['admin']))
+                                            {{ $evaluater->user->name }}
+                                        @endif
+                                    </td>
                                 @endif
                             @endforeach
-
                         </tr>
-                            @foreach($competence->indicators as $indicator)
-                            <tr id="tr_{{ $competence->id }}_{{$indicator->level->id}}" onclick="chxInd({{ $competence->id }},{{$indicator->level->id}})">
-                                <td align="right">{{ $indicator->level->level }}</td>
-                                <td>{{ $indicator->name }}</td>
-                                @foreach($evaluation->evaluaters as $evaluater)
-                                    @if($me->user->hasAnyRole(['admin']) ||
-                                        $evaluater->id == $me->id ||
-                                        ($me->role->code == 'total'))
-                                    <?php
-                                        $process = $evaluater->processes()
-                                            ->whereCompetenceId($competence->id)
-                                            ->first()
-                                        ?>
-                                    @if($process->level)
-                                        @if($process->level->id == $indicator->level->id)
-                                            <td align="center" style="background-color: #2f8034;color:white;">
-                                            {{--<span class="glyphicon glyphicon-check"></span>--}}
-                                                {{$indicator->level->level}}
-                                            </td>
-                                        @else
-                                            <td align="center">
-                                            {{--<span class="glyphicon glyphicon-remove"></span>--}}
-                                            </td>
-                                        @endif
-                                    @else
-                                        @if($evaluater->id == $me->id &&
-                                            ($evaluater->role->code != 'total' || $evaluation->is_total))
+                    @endif
+
+                    <tr @if($process->level) style="background-color: #DDDDFF" @endif>
+                        <td>{{ $process->indicator->name }}</td>
+                        @foreach($evaluaters as $evaluater)
+                            <?php
+                            $_process = $evaluater
+                                ->processes()
+                                ->whereIndicatorId($process->indicator_id)
+                                ->first()
+                            ?>
+
+                            @if($me->user->hasAnyRole(['admin']) ||
+                                $evaluater->id == $me->id ||
+                                ($me->role->code == 'total'))
+
+                                @if($evaluater->finished)
+                                    <td align="center" style="background-color: #2f8034;color:white;">
+                                        {{--<span class="glyphicon glyphicon-check"></span>--}}
+                                        {{ $_process->level->level }}
+                                    </td>
+                                @else
+                                    @if($evaluater->id == $me->id &&
+                                        ($evaluater->role->code != 'total' || $evaluation->is_total))
                                         <td align="center">
-                                            <input type="hidden" name="process[{{$process->id}}][evaluater_id]" value="{{ $evaluater->id }}">
-                                            <input type="hidden" name="process[{{$process->id}}][competence_id]" value="{{ $competence->id }}">
-                                            <input type="radio" name="process[{{$process->id}}][eval_level_id]" required
-                                                   id="ind_{{$competence->id}}_{{$indicator->level->id}}" value="{{ $indicator->level->id }}" /></td>
-                                        @else
+                                            <input type="hidden" name="process[{{ $process->id }}][evaluater_id]"
+                                                   value="{{ $me->id }}"/>
+                                            <input type="hidden" name="process[{{ $process->id }}][indicator_id]"
+                                                   value="{{ $process->indicator->id }}"/>
+                                            <select name="process[{{ $process->id }}][eval_level_id]"
+                                                    class="form-control selectLevel">
+                                                <option value="-1">X</option>
+                                                @foreach($levels as $level)
+                                                    <option @if($process->eval_level_id == $level->id) selected @endif
+                                                        value="{{ $level->id }}">{{ $level->level }}</option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                    @else
                                         <td align="center" style="background-color: #000000;color:white;">
                                             {{--<span class="glyphicon glyphicon-adjust"></span>--}}
                                         </td>
-                                        @endif
                                     @endif
-                                    @endif
+                                @endif
+                            @endif
 
-                                @endforeach
-                            </tr>
-                            @endforeach
-                    @endforeach
-            @endforeach
+                        @endforeach
+                    </tr>
+
+                @endforeach
             </table>
 
             @if($evaluation->started && !$me->finished)
                 <div class="form-group">
                     <div class="col-md-3 pull-right">
-                        <button class="btn btn-block btn-success" >{!! trans('interface.next') !!}</button>
+                        <button type="submit"
+                                class="btn btn-block btn-success" >{!! trans('interface.next') !!}</button>
                     </div>
                 </div>
             @endif
@@ -144,16 +165,15 @@
 
 @section('javascript')
     <script>
-
-        @if(!$me->finished)
-        function chxInd(comp,ind)
-        {
-            $('[id^=tr_' + comp + ']').css('background-color','white');
-            $('#tr_' + comp + '_' + ind).css('background-color','#888888');
-            $('[id^=ind_' + comp + ']').removeAttr('checked');
-            $('#ind_' + comp + '_' + ind).attr('checked','checked');
-        }
-        @endif
+        $(function() {
+            $('.selectLevel').on('change',function(ev) {
+                if($(this).val() > 0) {
+                    $(this).parent().parent().css('background-color','#DDDDFF');
+                } else {
+                    $(this).parent().parent().css('background-color','#FFFFFF');
+                }
+            });
+        });
 
     </script>
 @endsection

@@ -11,25 +11,6 @@ class Competence extends Model
 
     protected $fillable = ['name','note','competence_type_id'];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::created(
-            function($competence)
-            {
-                foreach (\App\EvalLevel::all() as $lvl)
-                {
-                    $indicator = new \App\Indicator();
-                    $indicator->name = "";//$lvl->note
-                    $indicator->eval_level_id = $lvl->id;
-                    $indicator->competence_id = $competence->id;
-                    $indicator->save();
-                }
-            }
-        );
-    }
-
     public function indicators() {
         return $this->hasMany(\App\Indicator::class);
     }
@@ -46,8 +27,8 @@ class Competence extends Model
             ->withTimestamps();
     }
 
-    public function processes() {
-        return $this->hasMany(\App\EvalProcess::class);
-    }
+//    public function processes() {
+//        return $this->hasMany(\App\EvalProcess::class);
+//    }
 
 }
