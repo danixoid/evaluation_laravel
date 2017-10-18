@@ -43,6 +43,7 @@ Route::resource('/evaluation',"EvaluationController");
 Route::resource('/evaluater',"EvaluaterController");
 Route::resource('/evalprocess',"EvalProcessController");
 Route::resource('/level',"LevelController");
+Route::resource('/profile',"CompetenceProfileController");
 
 
 

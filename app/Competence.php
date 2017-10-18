@@ -15,6 +15,11 @@ class Competence extends Model
         return $this->hasMany(\App\Indicator::class);
     }
 
+    public function profiles() {
+        return $this->hasMany(\App\CompetenceProfile::class,
+            'competence_id');
+    }
+
     public function type() {
         return $this->belongsTo(\App\CompetenceType::class,'competence_type_id');
     }

@@ -56,7 +56,7 @@
                             <li{!! preg_match("/evaluation/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('evaluation.index') }}">{{ trans('interface.evaluation_personal') }}</a></li>
 
 
-                            <li class="{!! preg_match("/competence/",request()->url()) ? "active" : "" !!}  dropdown {{-- menu-item dropdown-submenu--}}">
+                            <li class="{!! preg_match("/(competence|level|profile)/",request()->url()) ? "active" : "" !!}  dropdown {{-- menu-item dropdown-submenu--}}">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                     {{ trans('interface.competences') }} <span class="caret"></span>
                                 </a>
@@ -67,6 +67,7 @@
                                     @endforeach
                                     <li role="separator" class="divider"></li>
                                     <li{!! preg_match("/level/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('level.index') }}">{{ trans('interface.competence_level') }}</a></li>
+                                    <li{!! preg_match("/profile/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('profile.index') }}">{{ trans('interface.competence_profile') }}</a></li>
                                 </ul>
                             </li>{{--
                                     <li class="{!! preg_match("/evaluation\/report/",request()->url()) ? "active" : "" !!} menu-item dropdown dropdown-submenu">

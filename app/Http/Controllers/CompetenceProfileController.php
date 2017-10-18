@@ -23,7 +23,35 @@ class CompetenceProfileController extends Controller
      */
     public function index()
     {
-        //
+        $competences = \App\Competence::where(function($q){
+                return $q->whereHas('type',function($q) {
+                        return $q->whereProf(false);
+                    });
+            })
+            ->orWhere(function($q) {
+
+                return $q->whereHas('type', function ($q) {
+                        return $q->whereProf(true);
+                    })
+                    ->whereHas('positions', function ($q) {
+
+                        $org_id = request('org_id') ?: null;
+                        $func_id = request('func_id') ?: null;
+                        $position_id = request('position_id') ?: null;
+
+                        return $q
+                            ->whereOrgId($org_id)
+                            ->whereFuncId($func_id)
+                            ->wherePositionId($position_id);
+
+                    });
+
+            })
+            ->orderBy('competence_type_id')
+            ->orderBy('id')
+            ->get();
+
+        return view('profile.index',['competences' => $competences] );
     }
 
     /**
@@ -44,7 +72,37 @@ class CompetenceProfileController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+
+//        dd($data);
+
+        if(isset($data['profile']) && is_array($data['profile'])){
+            foreach($data['profile'] as $id => $profile) {
+                if($profile['eval_level_id'] > 0
+                    && $profile['competence_id'] > 0
+                    && $profile['org_id'] > 0
+                    && $profile['position_id'] > 0) {
+                    \App\CompetenceProfile::whereOrgId($profile['org_id'])
+                        ->wherePositionId($profile['position_id'])
+                        ->whereFuncId($profile['func_id'])
+                        ->whereCompetenceId($profile['competence_id'])
+                        ->delete();
+                    \App\CompetenceProfile::create($profile);
+                }
+            }
+        }
+
+        if($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => trans('interface.success_create_competence_profile')
+            ]);
+        }
+
+        return redirect()
+            ->back()
+            ->with('message', trans('interface.success_create_competence_profile'));
+
     }
 
     /**

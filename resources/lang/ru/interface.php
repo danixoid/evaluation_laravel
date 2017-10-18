@@ -162,6 +162,7 @@ return [
     'deleted' => 'Удалено',
     'total_role' => 'Итоговая оценка',
     'competence_level' => 'Уровни компетенций',
+    'competence_profile' => 'Профили компетенций',
 //    '' => '',
 
 
