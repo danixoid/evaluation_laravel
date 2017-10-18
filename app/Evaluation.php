@@ -8,9 +8,11 @@ class Evaluation extends Model
 {
 
     protected $fillable = ['org_id','position_id','func_id',
-        'eval_type_id','user_id','started_at'];
+        'eval_type_id','user_id','started_at','finished_at'];
 
     protected $appends = ['started','finished','is_total','enough'];
+
+    protected $dates = ['started_at','finished_at'];
 
     protected static function boot()
     {
@@ -110,28 +112,14 @@ class Evaluation extends Model
 
     public function getFinishedAttribute()
     {
-        $totalRole = \App\EvalRole::whereCode('total')->first();
-        $evaluater = $this
-            ->evaluaters()
-            ->whereEvalRoleId($totalRole->id)
-            ->first();
+        if($this->finished_at < \Carbon\Carbon::now()) return true;
 
-        if($evaluater) return  $evaluater->finished;
-
-        return false;
-    }
-
-    public function getIsTotalAttribute()
-    {
-        $totalRole = \App\EvalRole::whereCode('total')->first();
-        $evaluaters = $this->evaluaters()->where('eval_role_id','<>',$totalRole->id)->get();
-
-        foreach ($evaluaters as $evaluater)
-        {
-            if(!$evaluater->finished) return false;
-        }
-
-        return true;
+        return $this
+                ->evaluaters()
+                ->whereHas('processes',function($q) {
+                    return $q->whereNull('eval_level_id');
+                })
+                ->count() == 0;
     }
 
     public function getEnoughAttribute()

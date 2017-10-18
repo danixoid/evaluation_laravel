@@ -16,65 +16,100 @@
 
                     <div class="panel-body">
 
-                        <form id="form_create_user" class="form-horizontal"
-                              action="{!! route('user.store') !!}" method="POST">
-                            {!! csrf_field() !!}
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">{{ trans('interface.create') }}</a></li>
+                            <li role="presentation"><a href="#import" aria-controls="import" role="tab" data-toggle="tab">{{ trans('interface.import') }}</a></li>
+                        </ul>
 
-                            <div class="form-group">
-                                <label class="col-md-3 control-label">{!! trans('interface.name') !!}</label>
-                                <div class="col-md-9">
-                                    <input type="text" class="form-control" name="name"
-                                           value="{!! old('name') !!}" required>
-                                </div>
-                            </div>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
 
-                            <div class="form-group">
-                                <label class="col-md-3 control-label">{!! trans('interface.iin') !!}</label>
-                                <div class="col-md-9">
-                                    <input type="text" pattern="\d{12}"  class="form-control"
-                                           name="iin" value="{!! old('iin') !!}" required>
-                                </div>
-                            </div>
+                            <!-- TAB 1 -->
+                            <div role="tabpanel" class="tab-pane active" id="home">
+                                <form id="form_create_user" class="form-horizontal"
+                                      action="{!! route('user.store') !!}" method="POST">
+                                    {!! csrf_field() !!}
 
-                            <div class="form-group">
-                                <label class="col-md-3 control-label">{!! trans('interface.email_address') !!}</label>
-                                <div class="col-md-9">
-                                    <input type="email" class="form-control" name="email"
-                                           value="{!! old('email') !!}" >
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-3 control-label">{!! trans('interface.password') !!}</label>
-                                <div class="col-md-9">
-                                    <input type="password" class="form-control pwsd" name="password" required>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-3 control-label">{!! trans('interface.confirm_password') !!}</label>
-                                <div class="col-md-9">
-                                    <input type="password" class="form-control" name="password_confirmation" required>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div class="col-md-6 col-md-offset-3">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" id="gen_pswd" > {!! trans('interface.generate_password') !!}
-                                        </label>
-                                        <span class="text-primary" id="pswd"></span>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">{!! trans('interface.name') !!}</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="name"
+                                                   value="{!! old('name') !!}" required>
+                                        </div>
                                     </div>
-                                </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">{!! trans('interface.iin') !!}</label>
+                                        <div class="col-md-9">
+                                            <input type="text" pattern="\d{12}"  class="form-control"
+                                                   name="iin" value="{!! old('iin') !!}" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">{!! trans('interface.email_address') !!}</label>
+                                        <div class="col-md-9">
+                                            <input type="email" class="form-control" name="email"
+                                                   value="{!! old('email') !!}" >
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">{!! trans('interface.password') !!}</label>
+                                        <div class="col-md-9">
+                                            <input type="password" class="form-control pwsd" name="password" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">{!! trans('interface.confirm_password') !!}</label>
+                                        <div class="col-md-9">
+                                            <input type="password" class="form-control" name="password_confirmation" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-6 col-md-offset-3">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" id="gen_pswd" > {!! trans('interface.generate_password') !!}
+                                                </label>
+                                                <span class="text-primary" id="pswd"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-offset-3 col-md-3">
+                                            <button class="btn btn-block btn-danger" >{!! trans('interface.create') !!}</button>
+                                        </div>
+                                    </div>
+                                </form>
+
                             </div>
 
-                            <div class="form-group">
-                                <div class="col-md-offset-3 col-md-3">
-                                    <button class="btn btn-block btn-danger" >{!! trans('interface.create') !!}</button>
-                                </div>
+                            <!-- TAB 2 -->
+                            <div role="tabpanel" class="tab-pane" id="import">
+                                <form id="form_import_evaluation" class="form-horizontal"  enctype="multipart/form-data"
+                                      action="{!! route('user.store') !!}" method="POST">
+                                    {!! csrf_field() !!}
+
+                                    <div class="form-group">
+                                        <div class="col-md-9 col-md-offset-3">
+                                            <input type="file" name="file" class="form-control" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-offset-3 col-md-3">
+                                            <button class="btn btn-block btn-danger" >{!! trans('interface.import') !!}</button>
+                                        </div>
+                                    </div>
+                                </form>
+
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>

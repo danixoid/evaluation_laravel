@@ -15,6 +15,7 @@ class CreateEvalTypesTable extends Migration
     {
         Schema::create('eval_types', function (Blueprint $table) {
             $table->increments('id');
+            $table->boolean('chief')->default(false);
             $table->string('name');
             $table->text('note')->nullable();
             $table->timestamps();

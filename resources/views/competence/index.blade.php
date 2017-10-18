@@ -103,14 +103,30 @@
                             {{ $competences->links() }}
                         @foreach($competences as $competence)
                             <p>{{--{{ $competence->id }}. --}}<strong>{{ $competence->name }}</strong></p>
-                            <p>{{ $competence->note }}</p>
-                            <ol class="list-group">
+                            <p>
+                                <a href="{!! route('competence.show',['id'=>$competence->id]) !!}">{!!
+                                trans('interface.show') !!}</a> |
+                                <a href="{!! route('competence.edit',['id'=>$competence->id]) !!}">{!!
+                                trans('interface.edit') !!}</a> |
+                                <a href="#form_delete_competence{{ $competence->id }}"
+                                   onclick="$('#form_delete_competence{{ $competence->id }}').submit();">{!!
+                                            $competence->trashed() ? trans('interface.restore')
+                                            : trans('interface.to_archive') !!}</a>
+                            </p>
+                            <form id="form_delete_competence{{ $competence->id }}" action="{!! route('competence.destroy',['id' => $competence->id]) !!}" method="POST">
+                                {!! csrf_field() !!}
+                                {!! method_field("DELETE") !!}
+                            </form>
+                            <blockquote class="blockquote">{{ $competence->note }}</blockquote>
+                            <table class="table table-condensed">
+                                <?php $i = 1;?>
                                 @foreach($competence->indicators as $indicator)
-                                    <li>
-                                        <strong>{{ $indicator->name }}</strong>
-                                    </li>
+                                    <tr>
+                                        <td>{{ $i++ }}.</td>
+                                        <td>{{ $indicator->name }}</td>
+                                    </tr>
                                 @endforeach
-                            </ol>
+                            </table>
 
                             @if($competence->positions()->count() > 0)
                             <div class="table-responsive">
@@ -140,20 +156,7 @@
                             </div>
                             @endif
 
-                            <p>
-                                <a href="{!! route('competence.show',['id'=>$competence->id]) !!}">{!!
-                                    trans('interface.show') !!}</a> |
-                                <a href="{!! route('competence.edit',['id'=>$competence->id]) !!}">{!!
-                                    trans('interface.edit') !!}</a> |
-                                <a href="#form_delete_competence{{ $competence->id }}"
-                                   onclick="$('#form_delete_competence{{ $competence->id }}').submit();">{!!
-                                                $competence->trashed() ? trans('interface.restore')
-                                                : trans('interface.to_archive') !!}</a>
-                            </p>
-                            <form id="form_delete_competence{{ $competence->id }}" action="{!! route('competence.destroy',['id' => $competence->id]) !!}" method="POST">
-                                {!! csrf_field() !!}
-                                {!! method_field("DELETE") !!}
-                            </form>
+
                             <hr />
                         @endforeach
                             {{ $competences->links() }}

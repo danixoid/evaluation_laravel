@@ -137,31 +137,36 @@
                             </form>
                         @endforeach
 
-                        <form id="form_start_evaluation" action="{!! route('evaluation.update',['id' => $evaluation->id]) !!}" method="POST">
+                        <form id="form_start_evaluation" class="form form-horizontal"
+                              action="{!! route('evaluation.update',['id' => $evaluation->id]) !!}" method="POST">
                             {!! csrf_field() !!}
                             {!! method_field("PUT") !!}
 
-                            @foreach (\App\CompetenceType::all() as $type)
-                                <div class="form-group">
-                                    <label class="col-md-3 control-label">{!! $type->note !!}</label>
-                                    <div class="col-md-9">
-                                        @foreach ($competences as $competence)
+                            @if($evaluation->enough)
 
-                                            @if($competence->type->id == $type->id)
-                                                <div class="checkbox">
-                                                    <label><input type="checkbox" name="competences[]" checked="checked" value="{{ $competence->id }}">
-                                                        <strong>{{ $competence->name }}</strong> {{ $competence->note }}</label>
-                                                    {{--@foreach($competence->positions as $position)
-                                                        <span>{{ $position->pivot->position_id }}</span>
-                                                        <span>{{ $position->pivot->org_id }}</span>
-                                                    @endforeach--}}
-                                                </div>
-                                            @endif
-                                        @endforeach
+                                @foreach (\App\CompetenceType::where('chief','<=',$evaluation->type->chief)->get()
+                                    as $type)
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">{!! $type->note !!}</label>
+                                        <div class="col-md-9">
+                                            @foreach ($competences as $competence)
+
+                                                @if($competence->type->id == $type->id)
+                                                    <div class="checkbox">
+                                                        <label><input type="checkbox" name="competences[]" checked="checked" value="{{ $competence->id }}">
+                                                            <strong>{{ $competence->name }}</strong> {{ $competence->note }}</label>
+                                                        {{--@foreach($competence->positions as $position)
+                                                            <span>{{ $position->pivot->position_id }}</span>
+                                                            <span>{{ $position->pivot->org_id }}</span>
+                                                        @endforeach--}}
+                                                    </div>
+                                                @endif
+                                            @endforeach
+                                        </div>
                                     </div>
-                                </div>
-                                <hr>
-                            @endforeach
+                                    <hr />
+                                @endforeach
+                            @endif
 
                         </form>
 

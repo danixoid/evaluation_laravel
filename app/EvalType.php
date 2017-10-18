@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EvalType extends Model
 {
-    protected $fillable = ['name','note'];
+    protected $fillable = ['name','note','chief'];
 
     public function roles()
     {

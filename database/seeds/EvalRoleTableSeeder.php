@@ -41,11 +41,6 @@ class EvalRoleTableSeeder extends Seeder
         $role->title = "Оценка клиентом, работающий с оцениваемым сотрудником";
         $role->save();
 
-        $role = new \App\EvalRole();
-        $role->name = "Итоговая оценка";
-        $role->code = "total";
-        $role->title = "Итоговая оценка ставится высшим руководителем";
-        $role->save();
 
     }
 }

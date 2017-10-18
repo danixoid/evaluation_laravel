@@ -42,18 +42,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-//        request()->user()->authorizeRoles(['employee']);
-        $exams = \App\Exam::where(function($q) {
-            if(Auth::user()->hasAnyRole(['admin','manager'])) {
-                return $q;
-            }
-            return $q
-                ->where('user_id', Auth::user()->id)
-                ->orWhere('chief_id', Auth::user()->id);
+        $evaluaters = \App\Evaluater::whereHas('evaluation',function($q) {
+                return $q->whereNotNull('started_at');
             })
-            ->paginate(10);
-
-        $evaluaters = \App\Evaluater::where(function($q) {
+            ->where(function($q) {
                 if(Auth::user()->hasAnyRole(['admin','manager'])) {
                     return $q;
                 }
@@ -63,54 +55,9 @@ class HomeController extends Controller
 
 
         return view('home',[
-            'exams' => $exams->appends(Input::except('page')),
             'evaluaters' => $evaluaters->appends(Input::except('page'))
         ]);
     }
-
-    /**
-     * @param $id
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function signingData($id)
-    {
-//      $request->user()->authorizeRoles('manager');
-        $exam = \App\Exam::where('id',$id)
-            ->where(function($q) {
-                return $q
-                    ->where('user_id',Auth::user()->id)
-                    ->orWhere('chief_id',Auth::user()->id);
-            })
-            ->with(['tickets','tickets.quest'])
-            ->first();
-
-        if($exam) {
-            return view("signing",['exam' => $exam ]);
-        }
-
-        abort(403);
-    }
-
-    public function signedXml($id)
-    {
-        $sign = \App\Sign::find($id);
-        $root = simplexml_load_string($sign->xml, "SimpleXMLElement", LIBXML_NOCDATA);
-        if(\request()->has('type') && \request('type') == 'pdf')
-        {
-//            dd(XML2Array($root));
-//            return response($sign->xml,200,['Content-Type' => 'Application/xml']);
-
-//            return view('pdf.signed',['exam' => $root]);
-
-            $pdf = \PDF::loadView('pdf.signed',['exam' => $root]);
-            return $pdf->stream('signed_'. $id . 'pdf');
-        }
-
-        return response($sign->xml,200,[
-            'Content-Type' => 'application/xml'
-        ]);
-    }
-
 
     public function imageUpload(Request $request) {
 

@@ -4,8 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class SignController extends Controller
+class LevelController extends Controller
 {
+    /**
+     * Instantiate a new controller instance.
+     *
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('role:admin,manager');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -13,7 +23,7 @@ class SignController extends Controller
      */
     public function index()
     {
-        //
+        return view('level.index',['levels' => \App\EvalLevel::all()]);
     }
 
     /**
@@ -23,7 +33,7 @@ class SignController extends Controller
      */
     public function create()
     {
-        //
+        abort(404);
     }
 
     /**
@@ -35,33 +45,17 @@ class SignController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+//        dd($data);
 
-        $sign = \App\Sign::create($data);
-
-        if(!$sign) {
-
-            if($request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => trans('interface.failure_create_sign')
-                ]);
+        if(isset($data['level']) && is_array($data['level']))
+        {
+            foreach ($data['level'] as $id => $level) {
+                unset($level['level']);
+                \App\EvalLevel::updateOrCreate(['id' => $id],$level);
             }
-
-            return redirect()->back()->with('warning',trans('interface.failure_create_sign'));
         }
 
-        if($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => trans('interface.success_create_sign'),
-                'sign' => $sign,
-            ]);
-        }
-
-        return redirect()
-            ->route('sign.show',$sign->id)
-            ->with('message',trans('interface.success_create_sign'));
-
+        return redirect()->back();
     }
 
     /**
@@ -72,7 +66,7 @@ class SignController extends Controller
      */
     public function show($id)
     {
-        //
+        abort(404);
     }
 
     /**
@@ -83,7 +77,7 @@ class SignController extends Controller
      */
     public function edit($id)
     {
-        //
+        abort(404);
     }
 
     /**
@@ -95,7 +89,7 @@ class SignController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        abort(404);
     }
 
     /**
@@ -106,6 +100,6 @@ class SignController extends Controller
      */
     public function destroy($id)
     {
-        //
+        abort(404);
     }
 }

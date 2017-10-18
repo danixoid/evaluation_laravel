@@ -24,10 +24,11 @@ class UserCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255',
-            'iin' => 'required|regex:/\d{12}/|unique:users',
-//            'email' => 'string|max:255',
-            'password' => 'required|string|min:6|confirmed',
+            'file' => 'required_without:org_id,position_id,user_id,eval_type_id|file',
+            'name' => 'required_without:file|string|max:255',
+//            'iin' => 'regex:/\d{12}/',
+            'email' => 'required_without:file|string|max:255|unique:users',
+            'password' => 'required_without:file|string|min:6|confirmed',
         ];
     }
 }

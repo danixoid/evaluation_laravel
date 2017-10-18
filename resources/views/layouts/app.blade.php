@@ -65,6 +65,8 @@
                                     @foreach(\App\CompetenceType::all() as $type)
                                         <li{!! preg_match("/competence\/(.+)?type=$type->id/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('competence.index',["type=".$type->id]) }}">{{ $type->name }}</a></li>
                                     @endforeach
+                                    <li role="separator" class="divider"></li>
+                                    <li{!! preg_match("/level/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('level.index') }}">{{ trans('interface.competence_level') }}</a></li>
                                 </ul>
                             </li>{{--
                                     <li class="{!! preg_match("/evaluation\/report/",request()->url()) ? "active" : "" !!} menu-item dropdown dropdown-submenu">
@@ -89,7 +91,7 @@
                                     <li{!! preg_match("/user/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('user.index') }}">{!! trans('interface.users') !!}</a></li>
                                 </ul>
                             </li>
-                            <li{!! preg_match("/help/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('help') }}">{!! trans('interface.help') !!}</a></li>
+{{--                            <li{!! preg_match("/help/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('help') }}">{!! trans('interface.help') !!}</a></li>--}}
                             {{--                            <li><a href="{{ route('ticket.index') }}">{!! trans('interface.tickets') !!}</a></li>--}}
 
                         @endif
@@ -98,11 +100,11 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="nav navbar-nav navbar-right">
 
-                        {{--@foreach(config()->get('app.locales') as $lang => $name)
+                        @foreach(config()->get('app.locales') as $lang => $name)
                             @if($lang != config()->get('app.locale'))
                                 <li><a href="{{ route('lang',['lang' => $lang]) }}">{!! $name !!}</a></li>
                             @endif
-                        @endforeach--}}
+                        @endforeach
                         <!-- Authentication Links -->
                         @if (Auth::guest())
                             <li><a href="{{ route('login') }}">{!! trans('interface.login') !!}</a></li>

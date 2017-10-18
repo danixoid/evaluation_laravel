@@ -24,9 +24,10 @@ class CompetenceCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string',
-            'note' => 'required|string',
-            'indicator' => 'required|array',
+            'word_file' => 'required_without:name,note|file',
+            'name' => 'required_without:word_file|string',
+            'note' => 'required_without:word_file|string',
+            'indicator' => 'required_without:word_file|array',
             'org_id' => 'int|min:1',
 //            'func_id' => 'int|min:1',
             'position_id' => 'int|min:1',

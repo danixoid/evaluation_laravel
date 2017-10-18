@@ -20,3 +20,6 @@ Vue.component('example', require('./components/Example.vue'));
 const app = new Vue({
     el: '#app'
 });
+
+
+require('../../../bower_components/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker');

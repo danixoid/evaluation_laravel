@@ -72,9 +72,12 @@
                         $type_id = $process->indicator->competence->type->id;
                         ?>
                         <tr style="background-color: #1d5020;color:white;">
-                            <th colspan="50">
+                            <th>
                                 {{ $process->indicator->competence->type->note }}
                             </th>
+                            <td colspan="5" align="center">
+                                {{ trans('interface.level') }}
+                            </td>
                         </tr>
                     @endif
 
@@ -85,66 +88,45 @@
                         <tr style="background-color: #2aabd2;color:white;">
                             <th>{{ $process->indicator->competence->name }}</th>
 
-                            @foreach($evaluaters as $evaluater)
-                                @if($me->user->hasAnyRole(['admin']) ||
-                                    $evaluater->id == $me->id ||
-                                    ($me->role->code == 'total'))
-                                    <td align="center">
-                                        {{ $evaluater->role->name }}
-                                        @if(\Auth::user()->hasAnyRole(['admin']))
-                                            {{ $evaluater->user->name }}
-                                        @endif
-                                    </td>
-                                @endif
+                            @foreach(\App\EvalLevel::orderBy('level')->get() as $level)
+                            <td align="center">
+                                {{ $level->level }}
+                            </td>
                             @endforeach
                         </tr>
                     @endif
 
                     <tr @if($process->level) style="background-color: #DDDDFF" @endif>
-                        <td>{{ $process->indicator->name }}</td>
-                        @foreach($evaluaters as $evaluater)
-                            <?php
-                            $_process = $evaluater
-                                ->processes()
-                                ->whereIndicatorId($process->indicator_id)
-                                ->first()
-                            ?>
+                        <td>
+                            {{ $process->indicator->name }}
+                        </td>
 
-                            @if($me->user->hasAnyRole(['admin']) ||
-                                $evaluater->id == $me->id ||
-                                ($me->role->code == 'total'))
+                        @foreach(\App\EvalLevel::orderBy('level')->get() as $level)
 
-                                @if($evaluater->finished)
-                                    <td align="center" style="background-color: #2f8034;color:white;">
+                                @if($me->finished)
+                                    @if($process->eval_level_id == null)
+                                        <td align="center" style="background-color: #000000;color:white;"></td>
+                                    @elseif($process->eval_level_id == $level->id)
+                                        <td align="center" style="background-color: #2f8034;color:white;">
                                         {{--<span class="glyphicon glyphicon-check"></span>--}}
-                                        {{ $_process->level->level }}
-                                    </td>
-                                @else
-                                    @if($evaluater->id == $me->id &&
-                                        ($evaluater->role->code != 'total' || $evaluation->is_total))
-                                        <td align="center">
-                                            <input type="hidden" name="process[{{ $process->id }}][evaluater_id]"
-                                                   value="{{ $me->id }}"/>
-                                            <input type="hidden" name="process[{{ $process->id }}][indicator_id]"
-                                                   value="{{ $process->indicator->id }}"/>
-                                            <select name="process[{{ $process->id }}][eval_level_id]"
-                                                    class="form-control selectLevel">
-                                                <option value="-1">X</option>
-                                                @foreach($levels as $level)
-                                                    <option @if($process->eval_level_id == $level->id) selected @endif
-                                                        value="{{ $level->id }}">{{ $level->level }}</option>
-                                                @endforeach
-                                            </select>
+                                            {{ $process->level->level }}
                                         </td>
                                     @else
-                                        <td align="center" style="background-color: #000000;color:white;">
-                                            {{--<span class="glyphicon glyphicon-adjust"></span>--}}
-                                        </td>
+                                        <td align="center"></td>
                                     @endif
+                                @else
+                                    <td align="center">
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" class="selectLevel"
+                                                   @if($process->eval_level_id == $level->id) checked @endif
+                                                   value="{{ $level->id }}"
+                                                   name="process[{{ $process->id }}][eval_level_id]"/></label>
+                                        </div>
+                                    </td>
                                 @endif
-                            @endif
-
                         @endforeach
+
                     </tr>
 
                 @endforeach
@@ -167,12 +149,43 @@
     <script>
         $(function() {
             $('.selectLevel').on('change',function(ev) {
-                if($(this).val() > 0) {
-                    $(this).parent().parent().css('background-color','#DDDDFF');
+                var $this = $(this);
+
+                var process_id = $(this).attr('name').replace(/process\[(\d+)\]\[.+\]/gi,"$1");
+                if($this.val() > 0) {
+
+
+                    $.ajax({
+                        type: "POST",
+                        url: "{!! route('evalprocess.store') !!}",
+                        data: JSON.parse('{ ' +
+                            '\"_token\" : ' +  '"{{ csrf_token() }}", ' +
+                            '\"process\" : { \"' +
+                                process_id + '\": {' +
+                                    '\"eval_level_id\" : ' + $this.val() +
+                            ' } } }'),
+                        dataType: "json",
+                        success: function(msg){
+                            if(msg.success) {
+                                $this.prop('checked','checked');
+                                $this.parent().parent().css('background-color','#DDDDFF');
+                                console.log(msg.message);
+                            } else {
+                                $this.removeProp('checked');
+                                console.log(msg.message);
+                            }
+                        },
+                        error: function(err) {
+                            $this.removeProp('checked');
+                            console.log(JSON.stringify(err));
+                        }
+                    });
+                    console.log('1');
                 } else {
-                    $(this).parent().parent().css('background-color','#FFFFFF');
+                    $this.parent().parent().css('background-color','#FFFFFF');
                 }
             });
+
         });
 
     </script>

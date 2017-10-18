@@ -37,14 +37,16 @@ class EvalProcessController extends Controller
         $data = $request->all();
 
 //        dd($data);
-
         $evalProcesses = null;
 //        try {
+
             foreach ($data['process'] as $id => $process)
             {
-                if($process['eval_level_id'] > 0) {
+                if(\App\EvalProcess::find($id)->evaluater->evaluation->finished_at > \Carbon\Carbon::now() &&
+                        $process['eval_level_id'] > 0) {
                     $evalProcesses = \App\EvalProcess::updateOrCreate(['id' => $id], $process);
                 }
+
             }/*
         } catch (\Exception $e) {
             $evalProcesses = null;

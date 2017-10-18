@@ -6,6 +6,7 @@ use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserEditRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -65,6 +66,56 @@ class UserController extends Controller
     public function store(UserCreateRequest $request)
     {
         $data = $request->all();
+
+
+        set_time_limit(60);
+
+        if($request->hasFile('file')) {
+            $path = $request->file('file')->getRealPath();
+            $data = Excel::load($path, function ($reader) {
+            })->get();
+
+//            dd($data);
+            if(!empty($data)) {
+
+                $i = 0;
+                foreach ($data->toArray() as $key => $value) {
+                    if (!empty($value)) {
+                        foreach ($value as $v) {
+
+                            $role = \App\Role::whereName('employee')->firstOrFail();
+
+
+                            $user = \App\User::whereEmail($v['el.adres'])->first();
+                            if(!$user) {
+                                $user = new \App\User();
+                                $user->email = $v['el.adres'];
+                                $user->password = bcrypt('12345');
+                            }
+                            $user->name = $v['fio'];
+                            $user->save();
+
+                            $user->roles()->detach();
+                            $user->roles()->attach($role);
+
+                            $i++;
+                        }
+                    }
+                }
+
+                return redirect()
+                    ->route('user.index')
+                    ->with('success',trans('interface.imported_file',['num' => $i]));
+
+            }
+
+            return redirect()
+                ->route('user.index')
+                ->with('warning',trans('interface.failure_create_evaluation'));
+
+        }
+
+
 
         if(isset($data['password'])) {
             $data['password'] = bcrypt($data['password']);

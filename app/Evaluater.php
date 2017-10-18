@@ -39,7 +39,8 @@ class Evaluater extends Model
 
     public function getFinishedAttribute()
     {
-        return $this->evaluation->started
-            && $this->processes()->whereNull('eval_level_id')->count() == 0;
+        return $this->evaluation->started_at != null
+            && ($this->evaluation->finished_at->lt(\Carbon\Carbon::now())
+            || $this->processes()->whereNull('eval_level_id')->count() == 0);
     }
 }

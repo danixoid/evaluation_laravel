@@ -10,7 +10,6 @@
 @section('content')
 
     <?php $user_id = request('user_id') ?: '0'; ?>
-    <?php $chief_id = request('chief_id') ?: '0'; ?>
 
     <div class="container">
         <div class="row">
@@ -20,8 +19,8 @@
                         <div class="row">
                             <label class="col-md-8">{!! trans('interface.evaluation_personal') !!}: {!! trans('interface.create') !!}</label>
                             <div class="col-md-4 text-right">
-                                <a href="#" onclick="$('#form_create_evaluation').submit();" >{!! trans('interface.create') !!}</a> |
-                                <a href="#" onclick="$('#form_import_evaluation').submit();" >{!! trans('interface.import') !!}</a> |
+                                {{--<a href="#" onclick="$('#form_create_evaluation').submit();" >{!! trans('interface.create') !!}</a> |--}}
+                                {{--<a href="#" onclick="$('#form_import_evaluation').submit();" >{!! trans('interface.import') !!}</a> |--}}
                                 <a href="{!! route('evaluation.index') !!}">{!! trans('interface.prev') !!}</a>
                             </div>
                         </div>
@@ -40,6 +39,7 @@
 
                             <!-- TAB 1 -->
                             <div role="tabpanel" class="tab-pane active" id="home">
+                                <br />
                                 <form id="form_create_evaluation" class="form-horizontal" action="{!! route('evaluation.store') !!}" method="POST">
                                     {!! csrf_field() !!}
 
@@ -102,7 +102,24 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">{!! trans('interface.finished_date') !!}</label>
+                                        <div class="col-md-4">
+                                            <div class='input-group date'>
+                                                <input type="text" class="form-control" value="{!! request('finished_at') !!}"
+                                                       name="finished_at" id="finished_at" />
+                                                        <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
 
+                                    <div class="form-group">
+                                        <div class="col-md-offset-3 col-md-3">
+                                            <button class="btn btn-block btn-danger" >{!! trans('interface.create') !!}</button>
+                                        </div>
+                                    </div>
 
 
                                 </form>
@@ -111,18 +128,16 @@
 
                             <!-- TAB 2 -->
                             <div role="tabpanel" class="tab-pane" id="import">
+                                <br />
                                 <form id="form_import_evaluation" class="form-horizontal"  enctype="multipart/form-data"
                                       action="{!! route('evaluation.store') !!}" method="POST">
                                     {!! csrf_field() !!}
 
                                     <div class="form-group">
-                                        <div class="col-md-9 col-md-offset-3">
+                                        <div class="col-md-4 col-md-offset-3">
                                             <input type="file" name="file" class="form-control" required>
                                         </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class="col-md-offset-3 col-md-3">
+                                        <div class="col-md-4">
                                             <button class="btn btn-block btn-danger" >{!! trans('interface.import') !!}</button>
                                         </div>
                                     </div>
@@ -134,8 +149,8 @@
 
                     <div class="panel-footer">
                         <div class="text-right">
-                            <a href="#" onclick="$('#form_create_evaluation').submit();" >{!! trans('interface.create') !!}</a> |
-                            <a href="#" onclick="$('#form_import_evaluation').submit();" >{!! trans('interface.import') !!}</a> |
+                            {{--<a href="#" onclick="$('#form_create_evaluation').submit();" >{!! trans('interface.create') !!}</a> |--}}
+                            {{--<a href="#" onclick="$('#form_import_evaluation').submit();" >{!! trans('interface.import') !!}</a> |--}}
                             <a href="{!! route('evaluation.index') !!}">{!! trans('interface.prev') !!}</a>
                         </div>
                     </div>
@@ -161,27 +176,26 @@
         $(function () {
 
             /**
+             * DateTimePicker
+             * */
+            $(function () {
+                $('.date').datetimepicker({
+                    locale: 'ru',
+                    format: 'YYYY-MM-DD HH:mm:ss'
+                });
+            });
+
+            /**
              *  SELECT2
              */
             var data = {
-
-
-                user : {
-                    id: '{!! $user_id !!}',
-                    text: '{!! ($user_id > 0)
-                                ? \App\User::find($user_id)->name
-                                : trans('interface.no_value') !!}',
-                },
-                chief : {
-                    id: '{!! $chief_id !!}',
-                    text: '{!! ($chief_id > 0)
-                                ? \App\User::find($chief_id)->name
-                                : trans('interface.no_value') !!}',
-                }
+                id: '{!! $user_id !!}',
+                text: '{!! ($user_id > 0)
+                            ? \App\User::find($user_id)->name
+                            : trans('interface.no_value') !!}',
             };
 
             $("select").each(function(){
-                var id = $(this).attr('id');
 
                 $(this).select2({
                     theme: "bootstrap",
@@ -192,15 +206,12 @@
                 });
             });
 
-            $("#user,#chief").each(function(){
-                var id = $(this).attr('id');
+            $("#user").each(function(){
 
                 $(this).select2({
-                    data: [
-                        data[id]
-                    ],
+                    data: [ data ],
                     ajax: {
-                        url: "{!! url('/" + (id === "chief" ? "user" : id) + "') !!}",
+                        url: "{!! url('/user') !!}",
                         dataType: 'json',
                         delay: 250,
                         data: function (params) {
@@ -210,10 +221,6 @@
                             };
                         },
                         processResults: function (data, params) {
-                            // parse the results into the format expected by Select2
-                            // since we are using custom formatting functions we do not need to
-                            // alter the remote JSON data, except to indicate that infinite
-                            // scrolling can be used
                             params.page = params.page || 1;
 
                             return {

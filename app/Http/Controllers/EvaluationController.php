@@ -6,6 +6,8 @@ use App\Http\Requests\EvaluationCreateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 
 class EvaluationController extends Controller
@@ -31,8 +33,9 @@ class EvaluationController extends Controller
         $org_id = request('org_id');
         $func_id = request('func_id');
         $position_id = request('position_id');
-        $begin_at = \request('begin_at');
-        $end_at = \request('end_at');
+        $begin_at = \request()->has('begin_at') ? \request('begin_at') . " 00:00:00" : null;
+        $end_at = \request()->has('end_at') ? \request('end_at') . " 23:59:59" : null;
+
 
         $query = \App\Evaluation::whereNotNull('created_at');
 
@@ -281,6 +284,35 @@ class EvaluationController extends Controller
     {
         $evaluation = \App\Evaluation::find($id);
 
+        $data = $request->all();
+        if(isset($data['finished_at']))
+        {
+            $validation = Validator::make($data,[
+                'finished_at' => 'required|date|after:tomorrow',
+            ]);
+
+            if ($validation->fails())
+            {
+                return redirect()->back()->withErrors($validation)->withInput();
+            }
+
+            $evaluation->finished_at = $data['finished_at'];
+            $evaluation->save();
+
+            if($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => trans('interface.success_updated_evaluation'),
+                    'evaluation' => $evaluation,
+                ]);
+            }
+
+            return redirect()
+                ->back()
+                ->with('message',trans('interface.success_updated_evaluation'));
+        }
+
+
         if($evaluation->started)
         {
             abort(404);
@@ -317,6 +349,10 @@ class EvaluationController extends Controller
 
             $evaluation->started_at = \Carbon\Carbon::now();
             $evaluation->save();
+            foreach($evaluation->evaluaters as $evaluater)
+            {
+                Mail::queue(new \App\Mail\EvaluationStartedMail($evaluater));
+            }
         }
 
         if($request->ajax()) {

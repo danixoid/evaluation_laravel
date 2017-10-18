@@ -12,11 +12,19 @@
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
-                    <div class="panel-heading">{{ $type->note }}| {!! trans('interface.add') !!}</div>
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-md-8">{{ $type->note }}| {!! trans('interface.add') !!}</div>
+                            <div class="col-md-4 text-right">
+                                <a href="{!! route('competence.index',['type'=>$type->id]) !!}" >{!! trans('interface.prev') !!}</a>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="panel-body">
 
-                        <form id="form_create_competence" class="form-horizontal" action="{!! route('competence.store') !!}" method="POST">
+                        <form id="form_create_competence" class="form-horizontal" enctype="multipart/form-data"
+                              action="{!! route('competence.store') !!}" method="POST">
                             {!! csrf_field() !!}
 
                             <input type="hidden" name="competence_type_id" value="{{ $type->id }}"/>
@@ -24,7 +32,7 @@
                             <div class="form-group">
                                 <label class="col-md-3 control-label">{!! trans('interface.competence') !!}</label>
                                 <div class="col-md-9">
-                                    <input type="text" placeholder="{{ trans('interface.title') }}" class="form-control" name="name" value="{!! old('name') !!}" required/>
+                                    <input type="text" placeholder="{{ trans('interface.title') }}" class="form-control" name="name" value="{!! old('name') !!}" />
                                 </div>
                             </div>
 
@@ -32,7 +40,7 @@
                                 <label class="col-md-3 control-label">{!! trans('interface.notes') !!}</label>
                                 <div class="col-md-9">
                                     <textarea id="note" placeholder="{{ trans('interface.notes') }}" rows="6"
-                                              class="form-control" name="note" required>{!! old('name') !!}</textarea>
+                                              class="form-control" name="note" >{!! old('name') !!}</textarea>
                                 </div>
                             </div>
 
@@ -135,13 +143,33 @@
                                 <div class="col-md-offset-3 col-md-3">
                                     <button class="btn btn-block btn-danger" >{!! trans('interface.save') !!}</button>
                                 </div>
-                                <div class=" col-md-3">
-                                    <a href="{!! route('competence.index',['type'=>$type->id]) !!}" class="btn btn-block btn-warning">{!! trans('interface.prev') !!}</a>
-                                </div>
 
                             </div>
 
 
+                        </form>
+
+                        <form id="form_create_competence" class="form-horizontal" enctype="multipart/form-data"
+                              action="{!! route('competence.store') !!}" method="POST">
+                            {!! csrf_field() !!}
+
+                            <input type="hidden" name="competence_type_id" value="{{ $type->id }}"/>
+
+                            <div class="form-group ">
+                                <div class="col-md-12 files color">
+                                    <label class="col-md-3 control-label">{!! trans('interface.import') !!}</label>
+                                    <div class="col-md-9">
+                                        <input type="file" name="word_file" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-offset-3 col-md-3">
+                                    <button class="btn btn-block btn-danger" >{!! trans('interface.import') !!}</button>
+                                </div>
+
+                            </div>
                         </form>
                     </div>
                 </div>

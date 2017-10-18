@@ -23,12 +23,8 @@ class Competence extends Model
     {
         return $this
             ->belongsToMany(\App\Competence::class,"competence_positions")
-            ->withPivot("func_id", "position_id", "org_id")
+            ->withPivot("func_id", "position_id", "org_id","eval_level_id")
             ->withTimestamps();
     }
-
-//    public function processes() {
-//        return $this->hasMany(\App\EvalProcess::class);
-//    }
 
 }

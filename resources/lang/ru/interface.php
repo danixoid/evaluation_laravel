@@ -83,7 +83,9 @@ return [
     'import' => 'Импорт',
     'import_word' => 'Перетяните файл сюда или нажмите',
     'imported_file' => 'Импортировано :count заданий',
-    'started_date' => 'Период проведения',
+    'period' => 'Период',
+    'started_date' => 'Дата запуска',
+    'finished_date' => 'Дата завершения',
     'signer' => 'Подписант',
     'print_to_pdf' => 'Печать в PDF',
     'home' => 'Главная',
@@ -158,6 +160,8 @@ return [
     'new_indicator' => 'Новый индикатор',
     'indicators' => 'Индикаторы',
     'deleted' => 'Удалено',
+    'total_role' => 'Итоговая оценка',
+    'competence_level' => 'Уровни компетенций',
 //    '' => '',
 
 
@@ -215,6 +219,7 @@ return [
     'success_create_evaluation' => 'Успешно создан опросник',
     'failure_create_evaluation' => 'Не удалось создать опросник',
     'success_save_evaluation' => 'Успешно запущен опросник',
+    'success_updated_evaluation' => 'Опросник успешно обновлен',
     'failure_save_evaluation' => 'Не удалось запустить опросник',
     'success_deleted_evaluation' => 'Опросник удален',
     'failure_deleted_evaluation' => 'Не удалось удалить опросник',

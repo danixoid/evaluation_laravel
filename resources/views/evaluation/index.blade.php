@@ -75,14 +75,26 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-md-3 control-label">{!! trans('interface.started_date') !!}</label>
+
                                 <div class="col-md-4">
-                                    <input type="date" class="form-control" value="{!! request('begin_at') !!}"
-                                           name="begin_at" id="begin_at" />
+
+                                    <div class='input-group date'>
+                                        <input type="text" class="form-control" value="{!! request('begin_at') !!}"
+                                               name="begin_at" id="begin_at" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+
                                 </div>
                                 <div class="col-md-5">
-                                    <div class="input-group">
-                                        <input type="date" class="form-control" value="{!! request('end_at') !!}"
+
+                                    <div class='input-group date'>
+                                        <input type="text" class="form-control" value="{!! request('end_at') !!}"
                                                name="end_at" id="end_at" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
                                         <div class="input-group-btn">
                                             <button type="submit" class="btn btn-info btn-block">{!! trans("interface.search") !!}</button>
                                         </div>
@@ -165,6 +177,16 @@
 
 
         $(function () {
+
+            /**
+             * DateTimePicker
+             * */
+            $(function () {
+                $('.date').datetimepicker({
+                    locale: 'ru',
+                    format: 'YYYY-MM-DD'
+                });
+            });
 
             /**
              *  SELECT2

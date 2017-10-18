@@ -28,7 +28,7 @@
                             <label for="email" class="col-md-4 control-label">{!! trans('interface.email_address') !!}</label>
 
                             <div class="col-md-6">
-                                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" >
+                                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
 
                                 @if ($errors->has('email'))
                                     <span class="help-block">
@@ -42,7 +42,7 @@
                             <label for="email" class="col-md-4 control-label">{!! trans('interface.iin') !!}</label>
 
                             <div class="col-md-6">
-                                <input id="iin" type="text" pattern="\d{12}"  class="form-control" name="iin" value="{{ old('iin') }}" required>
+                                <input id="iin" type="text" pattern="\d{12}"  class="form-control" name="iin" value="{{ old('iin') }}" >
 
                                 @if ($errors->has('iin'))
                                     <span class="help-block">

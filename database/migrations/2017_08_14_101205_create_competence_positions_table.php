@@ -20,6 +20,7 @@ class CreateCompetencePositionsTable extends Migration
             $table->unsignedInteger('func_id')->nullable();
             $table->unsignedInteger('position_id');
             $table->unsignedInteger('competence_id');
+            $table->unsignedInteger('eval_level_id')->nullable();
             $table->timestamps();
 
             $table->foreign('org_id')
@@ -30,6 +31,8 @@ class CreateCompetencePositionsTable extends Migration
                 ->references('id')->on('positions');
             $table->foreign('competence_id')
                 ->references('id')->on('competences');
+            $table->foreign('eval_level_id')
+                ->references('id')->on('eval_levels');
         });
     }
 

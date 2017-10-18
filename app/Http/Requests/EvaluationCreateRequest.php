@@ -30,6 +30,7 @@ class EvaluationCreateRequest extends FormRequest
             'org_id' => 'required_without:file|int|min:1',
 //            'func_id' => 'required_without:file|int|min:1',
             'position_id' => 'required_without:file|int|min:1',
+            'finished_at' => 'required_without:file|date|after:tomorrow',
         ];
     }
 }

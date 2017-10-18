@@ -65,7 +65,44 @@
                                         </div>
                                     </div>
 
-                                    @if($evaluation->func)
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">{!! trans('interface.started_date') !!}</label>
+                                        <div class="col-md-3 form-control-static">
+                                            {{ date("d.m.Y H:i",strtotime($evaluation->started_at)) }}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">{!! trans('interface.finished_date') !!}</label>
+                                        <div class="col-md-3 form-control-static">
+                                            {{ date("d.m.Y H:i",strtotime($evaluation->finished_at)) }}
+                                            <a href="#finished_at" data-toggle="collapse">[{{ trans('interface.edit') }}]</a>
+                                        </div>
+                                    </div>
+
+                                    <form action="{!! route('evaluation.update',$evaluation->id) !!}"
+                                          method="POST" id="finished_at"  class="collapse">
+                                        {!! csrf_field() !!}
+                                        {!! method_field('PUT') !!}
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">{!! trans('interface.finished_date') !!}</label>
+                                            <div class="col-md-4">
+                                                <div class='input-group date'>
+                                                    <input type="text" class="form-control" value="{!! $evaluation->finished_at !!}"
+                                                           name="finished_at" id="finished_at" />
+                                                    <span class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button class="btn btn-danger">{{ trans('interface.edit') }}</button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+
+                                @if($evaluation->func)
                                         <div class="form-group">
                                             <label class="col-md-3 control-label">{!! trans('interface.func') !!}</label>
                                             <div class="col-md-9 form-control-static">
@@ -132,5 +169,28 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('javascript')
+    <script type="text/javascript">
+        $(function() {
+
+            /**
+             * DateTimePicker
+             * */
+            $(function () {
+                $('.date').datetimepicker({
+                    locale: 'ru',
+                    format: 'YYYY-MM-DD HH:mm:ss'
+                });
+            });
+
+//            $('#finished_at').on('submit', function(ev) {
+//                ev.preventDefault();
+//
+//                $('#finished_at').collapse('hide');
+//            });
+        });
+    </script>
 @endsection
 

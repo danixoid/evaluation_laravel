@@ -10,15 +10,15 @@
                     <form class="form-horizontal" role="form" method="POST" action="{{ route('login') }}">
                         {{ csrf_field() }}
 
-                        <div class="form-group{{ $errors->has('iin') ? ' has-error' : '' }}">
-                            <label for="iin" class="col-md-4 control-label">{!! trans('interface.iin') !!}</label>
+                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                            <label for="email" class="col-md-4 control-label">{!! trans('interface.email_address') !!}</label>
 
                             <div class="col-md-6">
-                                <input id="iin" type="text" pattern="\d{12}" class="form-control" name="iin" value="{{ old('iin') }}" required autofocus>
+                                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required autofocus>
 
-                                @if ($errors->has('iin'))
+                                @if ($errors->has('email'))
                                     <span class="help-block">
-                                        <strong>{{ $errors->first('iin') }}</strong>
+                                        <strong>{{ $errors->first('email') }}</strong>
                                     </span>
                                 @endif
                             </div>

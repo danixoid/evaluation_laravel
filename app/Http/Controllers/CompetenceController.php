@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CompetenceCreateRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Storage;
 
 class CompetenceController extends Controller
 {
@@ -112,7 +113,82 @@ class CompetenceController extends Controller
     public function store(CompetenceCreateRequest $request)
     {
         $data = $request->all();
-        $data['author_id'] = auth()->user()->id;
+
+        if(request()->hasFile('word_file')) {
+//
+//            $path = storage_path(request()
+//                ->file('word_file')
+//                ->store('word_files'));
+
+            Storage::disk('word')->delete('word.txt');
+
+            $file = request()->file('word_file');
+            $file = $file->move(storage_path('app/word_files'),"word."
+                . $file->getClientOriginalExtension());
+            $path = $file->getRealPath();
+
+            $output = mberegi_replace("docx?$","txt",$path);
+
+            putenv('PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:'
+                . '/bin:/usr/games:/usr/local/games:/opt/node/bin');
+            putenv('HOME=' . sys_get_temp_dir());
+            $shell = shell_exec(env('OFFICE_CMD','libreoffice'). " --headless --convert-to "
+                . "\"txt:Text (encoded):UTF8\" "
+                . $path . " --outdir " . storage_path('app/word_files'));
+//            $shell = shell_exec("sudo /usr/bin/unoconv -f  html " . $path);
+
+//            dd($shell);
+
+            $content = file_get_contents($output);
+
+
+
+
+
+            $arr = mb_split("Компетенция \d+(\s+)?",$content);
+
+            //первый элемент без данных, удалить
+            unset($arr[0]);
+
+            $int = 0;
+            foreach ($arr as $str) {
+
+                $_data = mb_split("\n",$str);
+
+                $data['name'] = $_data[0];
+                unset($_data[0]);
+
+                $data['note'] = "";
+                $data['indicator'] = [];
+                $_isNote = true;
+                foreach($_data as $s) {
+                    if(preg_match("/\d+\.\s+/",$s)) {
+                        $_isNote = false;
+                        $_s = mberegi_replace("\d+\.\s+","",$s);
+                        array_push($data['indicator'],['name'=>$_s]);
+                    }
+                    if($_isNote) {
+                        $data['note'] .= "\n" . $s;
+                    }
+                }
+
+                $competence = \App\Competence::create($data);
+
+                if(isset($data['indicator']) && is_array($data['indicator'])) {
+                    $indicators = $data['indicator'];
+
+                    for ($i=0;$i<count($indicators);$i++) {
+                        $indicators[$i]['competence_id'] = $competence->id;
+                        \App\Indicator::create($indicators[$i]);
+                    }
+                }
+            }
+
+            return redirect()
+                ->route('competence.index',['type' => $data['competence_type_id']])
+                ->with('message',trans('interface.imported_file',['count' => $int]));
+        }
+
 //        dd($request->all());
         $competence = \App\Competence::create($data);
 
