@@ -163,6 +163,10 @@ return [
     'total_role' => 'Итоговая оценка',
     'competence_level' => 'Уровни компетенций',
     'competence_profile' => 'Профили компетенций',
+    'export_xls' => 'Экспорт в Excel',
+    'all' => 'Все',
+    'total_avg' => 'Среднее значение оценок всех компетенций',
+//    '' => '',
 //    '' => '',
 
 
@@ -234,5 +238,9 @@ return [
     // EVAL_PROCESS
     'success_create_eval_process' => 'Успешно добавлены оценки работнику',
     'failure_create_eval_process' => 'Не удалось добавить оценки работнику',
+
+    // COMPETENCE PROFILE
+    'success_create_competence_profile' => 'Успешно установлены профили компетенций',
+    'success_failure_competence_profile' => 'Не удалось обновить профили компетенций',
 
 ];

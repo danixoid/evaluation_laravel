@@ -92,6 +92,16 @@
                                     <li{!! preg_match("/user/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('user.index') }}">{!! trans('interface.users') !!}</a></li>
                                 </ul>
                             </li>
+                            <li class="{!! preg_match("/reports/",request()->url()) ? "active" : "" !!} dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                    {{ trans('interface.reports') }} <span class="caret"></span>
+                                </a>
+
+                                <ul class="dropdown-menu" role="menu">
+                                    <li{!! preg_match("/reports\/results/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('reports.results') }}">{!! trans('interface.report_results') !!}</a></li>
+
+                                </ul>
+                            </li>
 {{--                            <li{!! preg_match("/help/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('help') }}">{!! trans('interface.help') !!}</a></li>--}}
                             {{--                            <li><a href="{{ route('ticket.index') }}">{!! trans('interface.tickets') !!}</a></li>--}}
 

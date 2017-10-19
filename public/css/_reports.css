@@ -1,0 +1,10 @@
+
+#report tr th, #report tr td {
+    background-color: #ffffff;
+}
+
+#report tr > th,
+#report tr > td {
+    text-align: center;
+    border: 1px solid #000000;
+}

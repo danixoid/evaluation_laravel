@@ -126,6 +126,16 @@
                                                 : trans('interface.not_started'))
                                             }}
                                     </li>
+                                    @if($evaluation->started)
+                                    <li>
+                                        <strong>{{ trans('interface.started_date') }}</strong>
+                                        {{ date('d.m.Y H:i',strtotime($evaluation->started_at)) }}
+                                    </li>
+                                    <li>
+                                        <strong>{{ trans('interface.finished_date') }}</strong>
+                                        {{ date('d.m.Y H:i',strtotime($evaluation->finished_at)) }}
+                                    </li>
+                                    @endif
                                 </ul>
 
                                 <p>

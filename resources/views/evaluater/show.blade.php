@@ -116,13 +116,10 @@
                                     @endif
                                 @else
                                     <td align="center">
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" class="selectLevel"
-                                                   @if($process->eval_level_id == $level->id) checked @endif
-                                                   value="{{ $level->id }}"
-                                                   name="process[{{ $process->id }}][eval_level_id]"/></label>
-                                        </div>
+                                        <input type="radio" class="selectLevel"
+                                           @if($process->eval_level_id == $level->id) checked @endif
+                                           value="{{ $level->id }}"
+                                           name="process[{{ $process->id }}][eval_level_id]"/>
                                     </td>
                                 @endif
                         @endforeach

@@ -33,6 +33,7 @@ class EvaluationController extends Controller
         $org_id = request('org_id');
         $func_id = request('func_id');
         $position_id = request('position_id');
+        $user_id = request('user_id');
         $begin_at = \request()->has('begin_at') ? \request('begin_at') . " 00:00:00" : null;
         $end_at = \request()->has('end_at') ? \request('end_at') . " 23:59:59" : null;
 
@@ -46,6 +47,10 @@ class EvaluationController extends Controller
             });
         }
 
+        if($user_id &&  $user_id > 0)
+        {
+            $query = $query->whereUserId($user_id);
+        }
 
         if($org_id &&  $org_id > 0)
         {

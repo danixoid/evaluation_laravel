@@ -28,9 +28,9 @@
         @foreach($evaluation->evaluaters()
             ->orderBy('eval_role_id')
             ->get() as $evaluater)
-            <th>{{ $evaluater->role->name }}</th>
+            <th colspan="2">{{ $evaluater->role->name }} ({{ $evaluater->user->name }})</th>
         @endforeach
-        <th>{{ trans('interface.total_role') }}</th>
+        <th colspan="2">{{ trans('interface.total_role') }}</th>
     </tr>
 @foreach($competences as $competence)
 
@@ -60,7 +60,8 @@
                         ->first();
                 }
                 ?>
-                <td align="center"><strong>{{ $level ? $level->level : 0 }}</strong> ({{ round($average,2) }})</td>
+                <td align="center"><strong>{{ $level ? $level->level : 0 }}</strong></td>
+                <td align="center"><strong>{{ round($average,2) }}</strong></td>
             @endforeach
 
             <?php
@@ -83,7 +84,8 @@
                     ->first();
             }
             ?>
-            <td align="center"><strong>{{ $level ? $level->level : 0 }}</strong> ({{ round($average,2) }})</td>
+            <td align="center"><strong>{{ $level ? $level->level : 0 }}</strong></td>
+            <td align="center"><strong>{{ round($average,2) }}</strong></td>
         </tr>
     @endif
     <tr>
@@ -108,7 +110,8 @@
                     ->first();
             }
             ?>
-            <td align="center"><strong>{{ $level ? $level->level : 0 }}</strong> ({{ round($average,2) }})</td>
+            <td align="center"><strong>{{ $level ? $level->level : 0 }}</strong></td>
+            <td align="center"><strong>{{ round($average,2) }}</strong></td>
         @endforeach
 
         <?php
@@ -129,7 +132,8 @@
                 ->first();
         }
         ?>
-        <td align="center"><strong>{{ $level ? $level->level : 0 }}</strong> ({{ round($average,2) }})</td>
+        <td align="center"><strong>{{ $level ? $level->level : 0 }}</strong></td>
+        <td align="center"><strong>{{ round($average,2) }}</strong></td>
     </tr>
 @endforeach
 </table>

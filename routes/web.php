@@ -46,12 +46,14 @@ Route::resource('/level',"LevelController");
 Route::resource('/profile',"CompetenceProfileController");
 
 
-
+// Справочники
 Route::resource('/position',"PositionController");
 Route::resource('/func',"FuncController");
 Route::resource('/org',"OrgController");
 Route::resource('/user',"UserController");
 
+// Отчеты
+Route::any('/reports/results', 'ReportsController@results')->name('reports.results');
 
 
 Route::get('/upload', function() {
