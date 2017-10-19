@@ -99,7 +99,7 @@
                 },
                 title: {
                     display: true,
-                    text: '{{ trans('interface.report_plan') }}'
+                    text: '{{ trans('interface.report_compare') }}'
                 },
                 scales: {
                     yAxes: [{

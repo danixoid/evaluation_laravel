@@ -141,43 +141,33 @@ class ReportsController extends Controller
             $evaluation = $query->first();
 
             if ($evaluation) {
-                $competences = \App\Competence::whereHas('indicators', function ($q) use ($evaluation) {
-                    return $q->whereHas('processes', function ($q) use ($evaluation) {
-                        return $q->whereHas('evaluater', function ($q) use ($evaluation) {
-                            return $q->where('evaluation_id', $evaluation->id);
-                        });
-                    });
-                })
-                    ->orderBy('competence_type_id')
-                    ->orderBy('id')
-                    ->get();
 
                 if(request()->has('export') && request('export') == "xls")
                 {
-                    return Excel::create('New file', function ($excel) use ($competences, $evaluation) {
+                    return Excel::create('New file', function ($excel) use ( $evaluation) {
 
-                        $excel->sheet('New sheet', function ($sheet) use ($competences, $evaluation) {
+                        $excel->sheet('New sheet', function ($sheet) use ($evaluation) {
 
-                            $sheet->loadView('reports.individual_export', ['competences' => $competences, 'evaluation' => $evaluation]);
+                            $sheet->loadView('reports.individual_export', ['evaluation' => $evaluation]);
 
                         });
 
                     })->download('xlsx');
                 }
 
-                return view('reports.individual', ['competences' => $competences, 'evaluation' => $evaluation]);
+                return view('reports.individual', ['evaluation' => $evaluation]);
             }
         }
 
         return view('reports.individual');
     }
 
-    public function plan() {
+    public function compare() {
 
-        return view('reports.plan');
+        return view('reports.compare');
     }
 
-    public function plan_diagram() {
+    public function compare_diagram() {
 
 
         $query = \App\Evaluation::whereNotNull('started_at')
@@ -231,18 +221,23 @@ class ReportsController extends Controller
 
                         $excel->sheet('New sheet', function ($sheet) use ($competences, $evaluation) {
 
-                            $sheet->loadView('reports.plan_export', ['competences' => $competences, 'evaluation' => $evaluations]);
+                            $sheet->loadView('reports.compare_export', ['competences' => $competences, 'evaluation' => $evaluations]);
 
                         });
 
                     })->download('xlsx');
                 }
 
-                return view('reports.plan_diagram', ['competences' => $competences, 'evaluation' => $evaluation]);
+                return view('reports.compare_diagram', ['competences' => $competences, 'evaluation' => $evaluation]);
             }
         }
 
         return null;
+    }
+
+    public function plan()
+    {
+        return view("reports.plan");
     }
 
 }

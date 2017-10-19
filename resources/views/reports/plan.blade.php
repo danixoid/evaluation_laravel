@@ -18,7 +18,7 @@
                     <div class="col-md-4 text-right">
                         {{--<a href="#" onclick="$('#form_import_evaluation').submit();" >{!! trans('interface.import') !!}</a> |--}}
                         @if(isset($evaluation) && $evaluation)
-                            <a href="{!! route('reports.results', array_merge(request()->all(),
+                            <a href="{!! route('reports.compare', array_merge(request()->all(),
                             ['export'=>'xls'])) !!}">{!! trans('interface.export_xls') !!}</a>
                         @endif
                     </div>
@@ -67,15 +67,6 @@
                     </div>
 
                 </form>
-                    <style>
-                        canvas {
-                            -moz-user-select: none;
-                            -webkit-user-select: none;
-                            -ms-user-select: none;
-                        }
-                    </style>
-                    <iframe style="border-style: hidden;" src="{!! route('reports.plan.diagram',request()->all()) !!}"
-                            width="900" height="450"></iframe>
 
 
             </div>

@@ -10,15 +10,15 @@
 @section('content')
 
     <?php $user_id = request('user_id') ?: '0'; ?>
-    <div class="container-fluid">
+    <div class="container-fluid" xmlns:height="http://www.w3.org/1999/xhtml">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <div class="row">
-                    <label class="col-md-8">{!! trans('interface.reports') !!} | {!! trans('interface.report_individual') !!}</label>
+                    <label class="col-md-8">{!! trans('interface.reports') !!} | {!! trans('interface.report_compare') !!}</label>
                     <div class="col-md-4 text-right">
                         {{--<a href="#" onclick="$('#form_import_evaluation').submit();" >{!! trans('interface.import') !!}</a> |--}}
                         @if(isset($evaluation) && $evaluation)
-                            <a href="{!! route('reports.individual', array_merge(request()->all(),
+                            <a href="{!! route('reports.results', array_merge(request()->all(),
                             ['export'=>'xls'])) !!}">{!! trans('interface.export_xls') !!}</a>
                         @endif
                     </div>
@@ -27,7 +27,7 @@
 
             <div class="panel-body">
 
-                <form class="form-horizontal" id="form_reports_individual" action="{!! route("reports.individual") !!}">
+                <form class="form-horizontal" id="form_reports_compare" action="{!! route("reports.compare") !!}">
 
 
                     <div class="form-group">
@@ -67,9 +67,16 @@
                     </div>
 
                 </form>
-                @if(isset($evaluation))
-                    @include('reports.individual_export')
-                @endif
+                    <style>
+                        canvas {
+                            -moz-user-select: none;
+                            -webkit-user-select: none;
+                            -ms-user-select: none;
+                        }
+                    </style>
+                    <iframe style="border-style: hidden;" src="{!! route('reports.compare.diagram',request()->all()) !!}"
+                            width="900" height="450"></iframe>
+
 
             </div>
         </div>
@@ -156,12 +163,12 @@
 
             $("#user").each(function() {
                 $(this).on("select2:select", function(e) {
-                    $("#form_reports_individual").submit();
+                    $("#form_reports_compare").submit();
                 });
 
                 $(this).on("select2:unselect", function(e) {
                     $(this).val("0");
-                    $("#form_reports_individual").submit();
+                    $("#form_reports_compare").submit();
                 });
             });
 

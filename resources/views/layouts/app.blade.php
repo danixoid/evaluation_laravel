@@ -100,6 +100,7 @@
                                 <ul class="dropdown-menu" role="menu">
                                     <li{!! preg_match("/reports\/results/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('reports.results') }}">{!! trans('interface.report_results') !!}</a></li>
                                     <li{!! preg_match("/reports\/individual/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('reports.individual') }}">{!! trans('interface.report_individual') !!}</a></li>
+                                    <li{!! preg_match("/reports\/compare/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('reports.compare') }}">{!! trans('interface.report_compare') !!}</a></li>
                                     <li{!! preg_match("/reports\/plan/",request()->path()) ? " class=\"active\"" : "" !!}><a href="{{ route('reports.plan') }}">{!! trans('interface.report_plan') !!}</a></li>
 
                                 </ul>

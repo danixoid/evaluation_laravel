@@ -55,8 +55,9 @@ Route::resource('/user',"UserController");
 // Отчеты
 Route::any('/reports/results', 'ReportsController@results')->name('reports.results');
 Route::any('/reports/individual', 'ReportsController@individual')->name('reports.individual');
+Route::any('/reports/compare', 'ReportsController@compare')->name('reports.compare');
+Route::any('/reports/compare/diagram', 'ReportsController@compare_diagram')->name('reports.compare.diagram');
 Route::any('/reports/plan', 'ReportsController@plan')->name('reports.plan');
-Route::any('/reports/plan/diagram', 'ReportsController@plan_diagram')->name('reports.plan.diagram');
 
 
 Route::get('/upload', function() {
