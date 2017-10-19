@@ -182,6 +182,15 @@ class CompetenceController extends Controller
                         \App\Indicator::create($indicators[$i]);
                     }
                 }
+
+                if(isset($data['struct']) && is_array($data['struct'])) {
+                    $struct = array_unique($data['struct'],SORT_REGULAR);
+
+                    foreach ($struct as $items) {
+                        $competence->positions()->attach($competence,$items);
+                    }
+                }
+
             }
 
             return redirect()
