@@ -14,55 +14,21 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <div class="row">
-                    <label class="col-md-8">{!! trans('interface.reports') !!} | {!! trans('interface.report_results') !!}</label>
+                    <label class="col-md-8">{!! trans('interface.reports') !!} | {!! trans('interface.report_individual') !!}</label>
                     <div class="col-md-4 text-right">
                         {{--<a href="#" onclick="$('#form_import_evaluation').submit();" >{!! trans('interface.import') !!}</a> |--}}
-                        <a href="{!! route('reports.results', array_merge(request()->all(),
+                        @if(isset($evaluation) && $evaluation)
+                            <a href="{!! route('reports.results', array_merge(request()->all(),
                             ['export'=>'xls'])) !!}">{!! trans('interface.export_xls') !!}</a>
+                        @endif
                     </div>
                 </div>
             </div>
 
             <div class="panel-body">
 
-                <form class="form-horizontal" id="form_reports_results" action="{!! route("reports.results") !!}">
+                <form class="form-horizontal" id="form_reports_individual" action="{!! route("reports.individual") !!}">
 
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">{!! trans('interface.org') !!}</label>
-                        <div class="col-md-9">
-                            <select class="form-control select2-single" id="org" name="org_id">
-                                <option value="0">{{ trans('interface.no_value') }}</option>
-                                @foreach(\App\Org::all() as $org)
-                                    <option value="{{ $org->id }}"
-                                            @if(request('org_id') == $org->id) selected @endif>{{ $org->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">{!! trans('interface.func') !!}</label>
-                        <div class="col-md-9">
-                            <select class="form-control select2-single" id="func" name="func_id">
-                                <option value="0">{{ trans('interface.no_value') }}</option>
-                                @foreach(\App\Func::all() as $func)
-                                    <option value="{{ $func->id }}"
-                                            @if(request('func_id') == $func->id) selected @endif>{{ $func->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">{!! trans('interface.position') !!}</label>
-                        <div class="col-md-9">
-                            <select class="form-control select2-single" id="position" name="position_id">
-                                <option value="0">{{ trans('interface.no_value') }}</option>
-                                @foreach(\App\Position::all() as $position)
-                                    <option value="{{ $position->id }}"
-                                            @if(request('position_id') == $position->id) selected @endif>{{ $position->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
 
                     <div class="form-group">
                         <label class="col-md-3 control-label">{!! trans('interface.evaluated') !!}</label>
@@ -101,8 +67,9 @@
                     </div>
 
                 </form>
-
-                @include('reports.results_export')
+                @if(isset($evaluation))
+                    @include('reports.individual_export')
+                @endif
 
             </div>
         </div>
@@ -146,18 +113,6 @@
                 }
             };
 
-            $("#org,#func,#position").each(function(){
-                var id = $(this).attr('id');
-
-                $(this).select2({
-                    theme: "bootstrap",
-                    placeholder: '{!! trans('interface.select_position') !!}',
-                    allowClear: true,
-                    language: '{!! config()->get('app.locale') !!}',
-//                    minimumInputLength: 2,
-                });
-            });
-
             $("#user").each(function(){
                 var id = $(this).attr('id');
 
@@ -199,20 +154,16 @@
                 });
             });
 
-            $("#org,#func,#position,#user").each(function() {
+            $("#user").each(function() {
                 $(this).on("select2:select", function(e) {
-                    $("#form_reports_results").submit();
+                    $("#form_reports_individual").submit();
                 });
 
                 $(this).on("select2:unselect", function(e) {
                     $(this).val("0");
-                    $("#form_reports_results").submit();
+                    $("#form_reports_individual").submit();
                 });
             });
-
-//            $('[name="begin_at"],[name="end_at"]').on('change',function (ev) {
-//                $("#form_evaluation_search").submit();
-//            });
 
         });
 

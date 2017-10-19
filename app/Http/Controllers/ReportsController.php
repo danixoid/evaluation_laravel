@@ -20,13 +20,13 @@ class ReportsController extends Controller
 
     public function results()
     {
-
         $org_id = request('org_id');
         $func_id = request('func_id');
         $position_id = request('position_id');
         $user_id = request('user_id');
-        $begin_at = \request()->has('begin_at') ? \request('begin_at') . " 00:00:00" : null;
-        $end_at = \request()->has('end_at') ? \request('end_at') . " 23:59:59" : null;
+        $begin_at = \request()->has('begin_at') ? \request('begin_at') . " 00:00:00" : \Carbon\Carbon::today();
+        $end_at = \request()->has('end_at') ? \request('end_at') . " 23:59:59"
+            : mb_ereg_replace('00:00:00','23:59:59',\Carbon\Carbon::today());
 
 
         $query = \App\Evaluation::whereNotNull('started_at')
@@ -103,17 +103,146 @@ class ReportsController extends Controller
         return view('reports.results',['competences' => $competences,'evaluations' => $evaluations]);
     }
 
-    public function results_excel ()
-    {
-        Excel::create('New file', function($excel) {
 
-            $excel->sheet('New sheet', function($sheet) {
+    public function individual() {
 
-                $sheet->loadView('folder.view');
 
+        $query = \App\Evaluation::whereNotNull('started_at')
+            ->where(function($q){
+                return $q
+                    ->where('finished_at', '<',\Carbon\Carbon::now())
+                    ->orWhereHas('evaluaters', function($q) {
+                        return $q->whereHas('processes',function ($q) {
+                            return $q->whereNull('eval_level_id');
+                        });
+                    },'=',0);
             });
 
-        });
+        if(request('user_id')) {
+
+            $user_id = request('user_id');
+            $begin_at = \request()->has('begin_at') ? \request('begin_at') . " 00:00:00" : \Carbon\Carbon::today();
+            $end_at = \request()->has('end_at') ? \request('end_at') . " 23:59:59"
+                : mb_ereg_replace('00:00:00', '23:59:59', \Carbon\Carbon::today());
+
+            if ($user_id && $user_id > 0) {
+                $query = $query->whereUserId($user_id);
+            }
+
+
+            if ($begin_at) {
+                $query = $query->where('started_at', '>', $begin_at);
+            }
+
+            if ($end_at) {
+                $query = $query->where('started_at', '<', $end_at);
+            }
+
+            $evaluation = $query->first();
+
+            if ($evaluation) {
+                $competences = \App\Competence::whereHas('indicators', function ($q) use ($evaluation) {
+                    return $q->whereHas('processes', function ($q) use ($evaluation) {
+                        return $q->whereHas('evaluater', function ($q) use ($evaluation) {
+                            return $q->where('evaluation_id', $evaluation->id);
+                        });
+                    });
+                })
+                    ->orderBy('competence_type_id')
+                    ->orderBy('id')
+                    ->get();
+
+                if(request()->has('export') && request('export') == "xls")
+                {
+                    return Excel::create('New file', function ($excel) use ($competences, $evaluation) {
+
+                        $excel->sheet('New sheet', function ($sheet) use ($competences, $evaluation) {
+
+                            $sheet->loadView('reports.individual_export', ['competences' => $competences, 'evaluation' => $evaluation]);
+
+                        });
+
+                    })->download('xlsx');
+                }
+
+                return view('reports.individual', ['competences' => $competences, 'evaluation' => $evaluation]);
+            }
+        }
+
+        return view('reports.individual');
+    }
+
+    public function plan() {
+
+        return view('reports.plan');
+    }
+
+    public function plan_diagram() {
+
+
+        $query = \App\Evaluation::whereNotNull('started_at')
+            ->where(function($q){
+                return $q
+                    ->where('finished_at', '<',\Carbon\Carbon::now())
+                    ->orWhereHas('evaluaters', function($q) {
+                        return $q->whereHas('processes',function ($q) {
+                            return $q->whereNull('eval_level_id');
+                        });
+                    },'=',0);
+            });
+
+        if(request('user_id')) {
+
+            $user_id = request('user_id');
+            $begin_at = \request()->has('begin_at') ? \request('begin_at') . " 00:00:00" : \Carbon\Carbon::today();
+            $end_at = \request()->has('end_at') ? \request('end_at') . " 23:59:59"
+                : mb_ereg_replace('00:00:00', '23:59:59', \Carbon\Carbon::today());
+
+            if ($user_id && $user_id > 0) {
+                $query = $query->whereUserId($user_id);
+            }
+
+
+            if ($begin_at) {
+                $query = $query->where('started_at', '>', $begin_at);
+            }
+
+            if ($end_at) {
+                $query = $query->where('started_at', '<', $end_at);
+            }
+
+            $evaluation = $query->first();
+
+            if ($evaluation) {
+                $competences = \App\Competence::whereHas('indicators', function ($q) use ($evaluation) {
+                    return $q->whereHas('processes', function ($q) use ($evaluation) {
+                        return $q->whereHas('evaluater', function ($q) use ($evaluation) {
+                            return $q->where('evaluation_id', $evaluation->id);
+                        });
+                    });
+                })
+                    ->orderBy('competence_type_id')
+                    ->orderBy('id')
+                    ->get();
+
+                if(request()->has('export') && request('export') == "xls")
+                {
+                    return Excel::create('New file', function ($excel) use ($competences, $evaluation) {
+
+                        $excel->sheet('New sheet', function ($sheet) use ($competences, $evaluation) {
+
+                            $sheet->loadView('reports.plan_export', ['competences' => $competences, 'evaluation' => $evaluations]);
+
+                        });
+
+                    })->download('xlsx');
+                }
+
+                return view('reports.plan_diagram', ['competences' => $competences, 'evaluation' => $evaluation]);
+            }
+        }
+
+        return null;
     }
 
 }

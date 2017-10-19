@@ -20,6 +20,13 @@
         <td></td>
     </tr>
     <tr>
+        <td></td>
+        <td></td>
+        <td colspan="4">
+            <h3>{{ trans('interface.report_results') }}</h3>
+        </td>
+    </tr>
+    <tr>
         <td colspan="6">
             <h4>{{ trans('interface.org') }}: @if(request('org_id')){{ \App\Org::find(request('org_id'))->name }}@else {{ trans('interface.all') }}@endif</h4>
         </td>
