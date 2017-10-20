@@ -67,7 +67,9 @@
                     </div>
 
                 </form>
-
+                @if(isset($evaluation))
+                    @include('reports.plan_export')
+                @endif
 
             </div>
         </div>

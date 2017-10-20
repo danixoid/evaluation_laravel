@@ -237,6 +237,58 @@ class ReportsController extends Controller
 
     public function plan()
     {
+        $query = \App\Evaluation::whereNotNull('started_at')
+            ->where(function($q){
+                return $q
+                    ->where('finished_at', '<',\Carbon\Carbon::now())
+                    ->orWhereHas('evaluaters', function($q) {
+                        return $q->whereHas('processes',function ($q) {
+                            return $q->whereNull('eval_level_id');
+                        });
+                    },'=',0);
+            });
+
+        if(request('user_id')) {
+
+            $user_id = request('user_id');
+            $begin_at = \request()->has('begin_at') ? \request('begin_at') . " 00:00:00" : \Carbon\Carbon::today();
+            $end_at = \request()->has('end_at') ? \request('end_at') . " 23:59:59"
+                : mb_ereg_replace('00:00:00', '23:59:59', \Carbon\Carbon::today());
+
+            if ($user_id && $user_id > 0) {
+                $query = $query->whereUserId($user_id);
+            }
+
+
+            if ($begin_at) {
+                $query = $query->where('started_at', '>', $begin_at);
+            }
+
+            if ($end_at) {
+                $query = $query->where('started_at', '<', $end_at);
+            }
+
+            $evaluation = $query->first();
+
+            if ($evaluation) {
+
+                if(request()->has('export') && request('export') == "xls")
+                {
+                    return Excel::create('New file', function ($excel) use ( $evaluation) {
+
+                        $excel->sheet('New sheet', function ($sheet) use ($evaluation) {
+
+                            $sheet->loadView('reports.individual_export', ['evaluation' => $evaluation]);
+
+                        });
+
+                    })->download('xlsx');
+                }
+
+                return view('reports.plan', ['evaluation' => $evaluation]);
+            }
+        }
+
         return view("reports.plan");
     }
 

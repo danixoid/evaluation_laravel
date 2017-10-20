@@ -37,14 +37,15 @@ class EvalProcessController extends Controller
         $data = $request->all();
 
 //        dd($data);
-        $evalProcesses = null;
+        $process = null;
 //        try {
 
-            foreach ($data['process'] as $id => $process)
+            foreach ($data['process'] as $id => $_data)
             {
-                if(\App\EvalProcess::find($id)->evaluater->evaluation->finished_at > \Carbon\Carbon::now() &&
-                        $process['eval_level_id'] > 0) {
-                    $evalProcesses = \App\EvalProcess::updateOrCreate(['id' => $id], $process);
+                $evaluation = \App\EvalProcess::find($id)->evaluater->evaluation;
+                if($evaluation->finished_at > \Carbon\Carbon::now() &&
+                        $_data['eval_level_id'] > 0) {
+                    $process = \App\EvalProcess::updateOrCreate(['id' => $id], $_data);
                 }
 
             }/*
@@ -52,7 +53,7 @@ class EvalProcessController extends Controller
             $evalProcesses = null;
         }*/
 
-        if(!$evalProcesses) {
+        if(!$process) {
 
             if($request->ajax()) {
                 return response()->json([
@@ -75,7 +76,7 @@ class EvalProcessController extends Controller
             ]);
         }
 
-        if($evalProcesses->evaluater->finished) {
+        if($process->evaluater->finished) {
             return redirect()
                 ->route('index')
                 ->with('message', trans('interface.success_create_eval_process'));
