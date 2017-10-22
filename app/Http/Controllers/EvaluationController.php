@@ -74,7 +74,10 @@ class EvaluationController extends Controller
             $query = $query->where('started_at','<',$end_at);
         }
 
-        $evaluations = $query->paginate(15);
+        $evaluations = $query
+            ->orderBy('started_at','desc')
+            ->orderBy('updated_at','desc')
+            ->paginate(15);
 
         if(request()->ajax()) {
             return response()->json(['evaluations' => $evaluations]);

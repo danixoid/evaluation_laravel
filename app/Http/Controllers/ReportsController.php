@@ -24,7 +24,8 @@ class ReportsController extends Controller
         $func_id = request('func_id');
         $position_id = request('position_id');
         $user_id = request('user_id');
-        $begin_at = \request()->has('begin_at') ? \request('begin_at') . " 00:00:00" : \Carbon\Carbon::today();
+        $begin_at = \request()->has('begin_at') ? \request('begin_at') . " 00:00:00"
+            : \Carbon\Carbon::today()->month(\Carbon\Carbon::today()->month - 1);
         $end_at = \request()->has('end_at') ? \request('end_at') . " 23:59:59"
             : mb_ereg_replace('00:00:00','23:59:59',\Carbon\Carbon::today());
 
@@ -76,7 +77,10 @@ class ReportsController extends Controller
         }
 
         $evaluations_list = array_unique($query->pluck('id')->toArray());
-        $evaluations = $query->get();
+
+        $evaluations= $query
+            ->orderBy('finished_at','asc')
+            ->get();
 
         $competences = \App\Competence::whereHas('indicators',function($q) use ($evaluations_list) {
                 return $q->whereHas('processes',function ($q) use ($evaluations_list){
@@ -121,9 +125,8 @@ class ReportsController extends Controller
         if(request('user_id')) {
 
             $user_id = request('user_id');
-            $begin_at = \request()->has('begin_at') ? \request('begin_at') . " 00:00:00" : \Carbon\Carbon::today();
-            $end_at = \request()->has('end_at') ? \request('end_at') . " 23:59:59"
-                : mb_ereg_replace('00:00:00', '23:59:59', \Carbon\Carbon::today());
+            $begin_at = \request()->has('begin_at') ? \request('begin_at') . " 00:00:00" : null;
+            $end_at = \request()->has('end_at') ? \request('end_at') . " 23:59:59" : null;
 
             if ($user_id && $user_id > 0) {
                 $query = $query->whereUserId($user_id);
@@ -138,7 +141,9 @@ class ReportsController extends Controller
                 $query = $query->where('started_at', '<', $end_at);
             }
 
-            $evaluation = $query->first();
+            $evaluation = $query
+                ->orderBy('finished_at','desc')
+                ->first();
 
             if ($evaluation) {
 
@@ -184,9 +189,8 @@ class ReportsController extends Controller
         if(request('user_id')) {
 
             $user_id = request('user_id');
-            $begin_at = \request()->has('begin_at') ? \request('begin_at') . " 00:00:00" : \Carbon\Carbon::today();
-            $end_at = \request()->has('end_at') ? \request('end_at') . " 23:59:59"
-                : mb_ereg_replace('00:00:00', '23:59:59', \Carbon\Carbon::today());
+            $begin_at = \request()->has('begin_at') ? \request('begin_at') . " 00:00:00" : null;
+            $end_at = \request()->has('end_at') ? \request('end_at') . " 23:59:59" : null;
 
             if ($user_id && $user_id > 0) {
                 $query = $query->whereUserId($user_id);
@@ -201,7 +205,9 @@ class ReportsController extends Controller
                 $query = $query->where('started_at', '<', $end_at);
             }
 
-            $evaluation = $query->first();
+            $evaluation = $query
+                ->orderBy('finished_at','desc')
+                ->first();
 
             if ($evaluation) {
                 $competences = \App\Competence::whereHas('indicators', function ($q) use ($evaluation) {
@@ -251,14 +257,12 @@ class ReportsController extends Controller
         if(request('user_id')) {
 
             $user_id = request('user_id');
-            $begin_at = \request()->has('begin_at') ? \request('begin_at') . " 00:00:00" : \Carbon\Carbon::today();
-            $end_at = \request()->has('end_at') ? \request('end_at') . " 23:59:59"
-                : mb_ereg_replace('00:00:00', '23:59:59', \Carbon\Carbon::today());
+            $begin_at = \request()->has('begin_at') ? \request('begin_at') . " 00:00:00" : null;
+            $end_at = \request()->has('end_at') ? \request('end_at') . " 23:59:59" : null;
 
             if ($user_id && $user_id > 0) {
                 $query = $query->whereUserId($user_id);
             }
-
 
             if ($begin_at) {
                 $query = $query->where('started_at', '>', $begin_at);
@@ -268,7 +272,9 @@ class ReportsController extends Controller
                 $query = $query->where('started_at', '<', $end_at);
             }
 
-            $evaluation = $query->first();
+            $evaluation = $query
+                ->orderBy('finished_at','desc')
+                ->first();
 
             if ($evaluation) {
 

@@ -27,22 +27,16 @@
     </tr>
     <tr>
         <td colspan="5">
-            <h4>{{ trans('interface.user') }}: @if(request('user_id')){{ \App\User::find(request('user_id'))->name }}@else {{ trans('interface.all') }}@endif</h4>
+            <h4>{{ trans('interface.user') }}: {{ $evaluation->evaluated->name }}</h4>
         </td>
     </tr>
     <tr>
         <td colspan="5">
-            <h4>{{ trans('interface.period') }}: @if(request('begin_at')){{ date('d.m.Y',strtotime(request('begin_at'))) }} @endif &mdash;
-                @if(request('end_at')){{ date('d.m.Y',strtotime(request('end_at'))) }} @endif</h4>
+            <h4>{{ trans('interface.period') }}: {{ date('d.m.Y',strtotime($evaluation->started_at)) }} &mdash;
+                {{ date('d.m.Y',strtotime($evaluation->finished_at)) }}</h4>
         </td>
     </tr>
-</table><?php
-/**
- * Created by PhpStorm.
- * User: danixoid
- * Date: 28.08.17
- * Time: 19:04
- */?>
+</table>
 
 <table id="report" class="table table-bordered">
 
@@ -125,7 +119,7 @@
                   OR (t.level = 5 AND els.max = t.level);");
             ?>
             @foreach($results as $result)
-                @if($result->level < $profile->level->level)
+                @if($result && $profile && $result->level < $profile->level->level)
                     <tr>
                         <td>{{ ++$i }}</td>
                         <td>{{ $competence->name }}</td>

@@ -77,7 +77,8 @@
                         <div class="col-md-4">
 
                             <div class='input-group date'>
-                                <input type="text" class="form-control" value="{!! request('begin_at') ?: \Carbon\Carbon::today() !!}"
+                                <input type="text" class="form-control" value="{!! request('begin_at')
+                                    ?: \Carbon\Carbon::today()->month(\Carbon\Carbon::today()->month - 1) !!}"
                                        name="begin_at" id="begin_at" />
                                 <span class="input-group-addon">
                                     <span class="glyphicon glyphicon-calendar"></span>
