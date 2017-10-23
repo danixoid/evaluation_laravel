@@ -74,66 +74,76 @@
     <tr>
         <td>{{ ++$i }}</td>
         <td>{{ $evaluation->evaluated->name }}</td>
-        <?php $totalAverage = []; ?>
-        @foreach($competences as $competence)
-            <td align="center">
-                <?php
-                $results = DB::select("
-                    SELECT   # СРЕДНЯЯ ПО КОМПЕТЕНЦИИ ВСЕХ ОЦЕНЩИКОВ
-                      t.id,
-                      t.name,
-                      t.level as average,els.level
-                      FROM
-                        (SELECT
-                          t.id,
-                          t.name,
-                          avg(els.level) as level,
-                          t.level as average
-                          FROM
-                          ( SELECT
-                              c.id,
-                              c.name,
-                              avg(el.level) AS level
-                            FROM evaluations evn
-                              LEFT JOIN evaluaters evr ON evn.id = evr.evaluation_id
-                              LEFT JOIN eval_processes ep ON evr.id = ep.evaluater_id
-                              LEFT JOIN eval_levels el ON el.id = ep.eval_level_id
-                              LEFT JOIN indicators i ON i.id = ep.indicator_id
-                              LEFT JOIN competences c ON c.id = i.competence_id
-                              LEFT JOIN competence_types ct ON ct.id = c.competence_type_id
-                            WHERE evn.id = $evaluation->id AND competence_id = $competence->id
-                            GROUP BY evr.id ) t, eval_levels els
-                        WHERE (t.level >= els.min AND t.level < els.max)
-                         OR (t.level = 5 AND els.max = t.level)
-                        ) t, eval_levels els
-                      WHERE (t.level >= els.min AND t.level < els.max)
-                      OR (t.level = 5 AND els.max = t.level);");
-                ?>
-                @foreach($results as $result)
-                        <?php
-                        array_push($totalAverage,$result->level);
+        <?php $totalAverage = [];
 
-                        ?>
-                    {{ $result->level }}
-                    ({{ round($result->average,2) }})
-                @endforeach
+        $comps = DB::select("
+            SELECT
+                  c.id,
+                  c.name,
+                  ct.id AS type_id,
+                  els.min,
+                  els.max,
+                  els.level,
+                  avg(el.level) AS average
+                FROM evaluations evn
+                  LEFT JOIN evaluaters evr ON evn.id = evr.evaluation_id
+                  LEFT JOIN eval_processes ep ON evr.id = ep.evaluater_id
+                  LEFT JOIN eval_levels el ON el.id = ep.eval_level_id
+                  LEFT JOIN indicators i ON i.id = ep.indicator_id
+                  LEFT JOIN competences c ON c.id = i.competence_id
+                  LEFT JOIN competence_types ct ON ct.id = c.competence_type_id
+                  , eval_levels els
+                WHERE evn.id = $evaluation->id
+                GROUP BY c.id, ct.id, els.id
+                HAVING (average >= els.min AND average < els.max)
+                       OR (average = 5 AND els.max = average)
+        ");
+        ?>
+
+        @foreach($comps as $competence)
+            <td align="center">
+                {{ $competence->level }}
+                ({{ round($competence->average,2) }})
+
             </td>
         @endforeach
         <td align="center">
             <?php
-            $average = array_sum($totalAverage)/count($totalAverage);
+            $results = DB::select("
+                SELECT
+                  els.min,
+                  els.max,
+                  els.level,
+                  avg(t.level) AS average
+                FROM
+                  (SELECT
+                     c.id,
+                     c.name,
+                     ct.id AS type_id,
+                     els.min,
+                     els.max,
+                     els.level,
+                     avg(el.level) AS average
+                   FROM evaluations evn
+                     LEFT JOIN evaluaters evr ON evn.id = evr.evaluation_id
+                     LEFT JOIN eval_processes ep ON evr.id = ep.evaluater_id
+                     LEFT JOIN eval_levels el ON el.id = ep.eval_level_id
+                     LEFT JOIN indicators i ON i.id = ep.indicator_id
+                     LEFT JOIN competences c ON c.id = i.competence_id
+                     LEFT JOIN competence_types ct ON ct.id = c.competence_type_id
+                     , eval_levels els
+                   WHERE evn.id = $evaluation->id
+                   GROUP BY c.id, ct.id, els.id
+                   HAVING (average >= els.min AND average < els.max)
+                          OR (average = 5 AND els.max = average)
+                  ) t, eval_levels els
+                  HAVING (average >= els.min AND average < els.max)
+                         OR (average = 5 AND els.max = average)");
             ?>
-            @if ($average > 0)
-            <?php
-            $level = \App\EvalLevel::where('min','<',$average)
-                ->where('max','>=',$average)
-                ->first();
-            array_push($totalAverage,$level);
-            ?>
-
-            {{ $level ? $level->level : "" }}
-            ({{ round($average,2) }})
-            @endif
+            @foreach($results as $result)
+                {{ $result->level }}
+                ({{ round($result->average,2) }})
+            @endforeach
         </td>
     </tr>
     @endforeach

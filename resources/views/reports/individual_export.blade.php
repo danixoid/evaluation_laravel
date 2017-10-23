@@ -36,7 +36,9 @@
                 {{ date('d.m.Y',strtotime($evaluation->finished_at)) }}</h4>
         </td>
     </tr>
-</table><?php
+</table>
+
+<?php
 /**
  * Created by PhpStorm.
  * User: danixoid
@@ -49,6 +51,7 @@
     <tr>
         <th>№</th>
         <th>{{ trans('interface.competence') }}</th>
+
         <th>{{ trans('interface.total_avg') }}</th>
     </tr>
     <?php
@@ -56,39 +59,38 @@
     $evalId = $evaluation->id;
 
     $types = DB::select("
-        SELECT   # СРЕДНЯЯ ПО КОМПЕТЕНЦИЯМ ВСЕХ ОЦЕНЩИКОВ
+        SELECT
           t.id,
           t.note,
-          t.level as average,
-          els.level
-        FROM
-          (SELECT
-             t.id,
-             t.note,
-             avg(els.level) as level,
-             t.level as average
-           FROM
-             ( SELECT
-                 ct.id,
-                 ct.note,
-                 avg(el.level) AS level
-               FROM evaluations evn
-                 LEFT JOIN evaluaters evr ON evn.id = evr.evaluation_id
-                 LEFT JOIN eval_processes ep ON evr.id = ep.evaluater_id
-                 LEFT JOIN eval_levels el ON el.id = ep.eval_level_id
-                 LEFT JOIN indicators i ON i.id = ep.indicator_id
-                 LEFT JOIN competences c ON c.id = i.competence_id
-                 LEFT JOIN competence_types ct ON ct.id = c.competence_type_id
-               WHERE evn.id = $evaluation->id
-               GROUP BY evr.id,competence_id
-               ORDER BY competence_type_id, competence_id)
-             t, eval_levels els
-           WHERE (t.level >= els.min AND t.level < els.max)
-                 OR (t.level = 5 AND els.max = t.level)
-           GROUP BY t.id
-          ) t, eval_levels els
-        WHERE (t.level >= els.min AND t.level < els.max)
-              OR (t.level = 5 AND els.max = t.level)");
+          els.min,
+          els.max,
+          els.level,
+          avg(t.level) AS average
+        FROM (
+           SELECT
+             ct.id,
+             ct.note,
+             els.min,
+             els.max,
+             els.level,
+             avg(el.level) AS average
+           FROM evaluations evn
+             LEFT JOIN evaluaters evr ON evn.id = evr.evaluation_id
+             LEFT JOIN eval_processes ep ON evr.id = ep.evaluater_id
+             LEFT JOIN eval_levels el ON el.id = ep.eval_level_id
+             LEFT JOIN indicators i ON i.id = ep.indicator_id
+             LEFT JOIN competences c ON c.id = i.competence_id
+             LEFT JOIN competence_types ct ON ct.id = c.competence_type_id
+             , eval_levels els
+           WHERE evn.id = $evaluation->id
+           GROUP BY c.id, ct.id, els.id
+           HAVING (average >= els.min AND average < els.max)
+                  OR (average = 5 AND els.max = average)
+         ) t, eval_levels els
+            GROUP BY t.id,els.id
+            HAVING (average >= els.min AND average < els.max)
+               OR (average = 5 AND els.max = average)
+           ");
 
     $typeId = 0;
     ?>
@@ -98,6 +100,7 @@
         <tr>
             <th></th>
             <th>{{ $type->note }}</th>
+
             <td align="center">
                 {{ $type->level }}
                 ({{ round($type->average,2) }})
@@ -107,50 +110,34 @@
         <?php
         $comps = DB::select("
             SELECT
-             t.id,
-             t.name,
-             els.level,
-             t.level as average
-           FROM
-             ( SELECT
-                 c.id,
-                 c.name,
-                 avg(el.level) AS level
-               FROM evaluations evn
-                 LEFT JOIN evaluaters evr ON evn.id = evr.evaluation_id
-                 LEFT JOIN eval_processes ep ON evr.id = ep.evaluater_id
-                 LEFT JOIN eval_levels el ON el.id = ep.eval_level_id
-                 LEFT JOIN indicators i ON i.id = ep.indicator_id
-                 LEFT JOIN competences c ON c.id = i.competence_id
-                 LEFT JOIN competence_types ct ON ct.id = c.competence_type_id
-               WHERE evn.id = $evaluation->id
-               AND competence_type_id = $type->id
-               GROUP BY evr.id,competence_id
-               ORDER BY competence_type_id, competence_id
-             ) t, eval_levels els
-           WHERE (t.level >= els.min AND t.level < els.max)
-                 OR (t.level = 5 AND els.max = t.level)
-           GROUP BY t.id
+                  c.id,
+                  c.name,
+                  ct.id AS type_id,
+                  els.min,
+                  els.max,
+                  els.level,
+                  avg(el.level) AS average
+                FROM evaluations evn
+                  LEFT JOIN evaluaters evr ON evn.id = evr.evaluation_id
+                  LEFT JOIN eval_processes ep ON evr.id = ep.evaluater_id
+                  LEFT JOIN eval_levels el ON el.id = ep.eval_level_id
+                  LEFT JOIN indicators i ON i.id = ep.indicator_id
+                  LEFT JOIN competences c ON c.id = i.competence_id
+                  LEFT JOIN competence_types ct ON ct.id = c.competence_type_id
+                  , eval_levels els
+                WHERE evn.id = $evaluation->id AND ct.id = $type->id
+                GROUP BY c.id, ct.id, els.id
+                HAVING (average >= els.min AND average < els.max)
+                       OR (average = 5 AND els.max = average)
         ");
         ?>
 
         @foreach($comps as $competence)
 
-            <?php
-            $type = \App\Competence::find($competence->id)->type;
-            ?>
-            @if($type->id != $typeId)
-                <?php
-                $i = 0;
-                $typeId = $type->id;
-                $typeLevel = 0;
-                ?>
-
-            @endif
-
             <tr>
                 <td>{{ ++$i }}</td>
                 <td>{{ $competence->name }}</td>
+
 
                 <td align="center">
                     {{ $competence->level }}
@@ -162,36 +149,40 @@
     <tr>
         <th></th>
         <th>{{ trans('interface.total_role') }}</th>
+
+
         <td align="center">
             <?php
             $results = DB::select("
-                SELECT   # СРЕДНЯЯ ПО КОМПЕТЕНЦИЯМ ВСЕХ ОЦЕНЩИКОВ
-                  t.level as average,
-                  els.level
+                SELECT
+                  els.min,
+                  els.max,
+                  els.level,
+                  avg(t.level) AS average
                 FROM
                   (SELECT
-                     avg(els.level) as level,
-                     t.level as average
-                   FROM
-                     ( SELECT
-                         avg(el.level) AS level
-                       FROM evaluations evn
-                         LEFT JOIN evaluaters evr ON evn.id = evr.evaluation_id
-                         LEFT JOIN eval_processes ep ON evr.id = ep.evaluater_id
-                         LEFT JOIN eval_levels el ON el.id = ep.eval_level_id
-                         LEFT JOIN indicators i ON i.id = ep.indicator_id
-                         LEFT JOIN competences c ON c.id = i.competence_id
-                         LEFT JOIN competence_types ct ON ct.id = c.competence_type_id
-                       WHERE evn.id = $evaluation->id #AND competence_type_id = 1
-                       GROUP BY evr.id,competence_id
-                       ORDER BY competence_type_id, competence_id)
-                     t, eval_levels els
-                   WHERE (t.level >= els.min AND t.level < els.max)
-                         OR (t.level = 5 AND els.max = t.level)
-                   #GROUP BY t.id
+                     c.id,
+                     c.name,
+                     ct.id AS type_id,
+                     els.min,
+                     els.max,
+                     els.level,
+                     avg(el.level) AS average
+                   FROM evaluations evn
+                     LEFT JOIN evaluaters evr ON evn.id = evr.evaluation_id
+                     LEFT JOIN eval_processes ep ON evr.id = ep.evaluater_id
+                     LEFT JOIN eval_levels el ON el.id = ep.eval_level_id
+                     LEFT JOIN indicators i ON i.id = ep.indicator_id
+                     LEFT JOIN competences c ON c.id = i.competence_id
+                     LEFT JOIN competence_types ct ON ct.id = c.competence_type_id
+                     , eval_levels els
+                   WHERE evn.id = $evaluation->id
+                   GROUP BY c.id, ct.id, els.id
+                   HAVING (average >= els.min AND average < els.max)
+                          OR (average = 5 AND els.max = average)
                   ) t, eval_levels els
-                WHERE (t.level >= els.min AND t.level < els.max)
-                      OR (t.level = 5 AND els.max = t.level)");
+                  HAVING (average >= els.min AND average < els.max)
+                         OR (average = 5 AND els.max = average)");
             ?>
             @foreach($results as $result)
                 {{ $result->level }}
@@ -200,5 +191,6 @@
         </td>
     </tr>
 </table>
+
 </body>
 </html>
