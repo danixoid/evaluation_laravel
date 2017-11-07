@@ -130,6 +130,7 @@
                 HAVING (average >= els.min AND average < els.max)
                        OR (average = 5 AND els.max = average)
         ");
+        $i = 0;
         ?>
 
         @foreach($comps as $competence)

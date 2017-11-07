@@ -100,11 +100,14 @@
         ");
         ?>
 
-        @foreach($comps as $competence)
+        @foreach($competences as $competence)
             <td align="center">
-                {{ $competence->level }}
-                ({{ round($competence->average,2) }})
-
+            @foreach($comps as $comp)
+                    @if($comp->id == $competence->id)
+                        {{ $comp->level }}
+                        ({{ round($comp->average,2) }})
+                    @endif
+            @endforeach
             </td>
         @endforeach
         <td align="center">
