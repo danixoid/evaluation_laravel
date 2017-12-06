@@ -53,7 +53,7 @@
                                     <div class="form-group">
                                         <label class="col-md-3 control-label">{!! trans('interface.email_address') !!}</label>
                                         <div class="col-md-9">
-                                            <input type="email" class="form-control" name="email" value="{!! $user->email !!}" />
+                                            <input type="email" class="form-control" disabled name="email" value="{!! $user->email !!}" />
                                         </div>
                                     </div>
 
