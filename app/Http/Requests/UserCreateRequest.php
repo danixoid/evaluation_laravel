@@ -24,7 +24,7 @@ class UserCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'file' => 'required_without:org_id,position_id,user_id,eval_type_id|file',
+            'file' => 'required_without:email|name|password|file',
             'name' => 'required_without:file|string|max:255',
 //            'iin' => 'regex:/\d{12}/',
             'email' => 'required_without:file|string|max:255|unique:users',
